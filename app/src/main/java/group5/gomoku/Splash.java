@@ -7,25 +7,30 @@ import android.os.Handler;
 
 public class Splash extends Activity {
 
-    /** Duration of wait **/
-    private final int SPLASH_DISPLAY_LENGTH = 1000;
+    // Set the splash screen time shown
+    private static int SPLASH_TIME_OUT = 3000;
 
-    /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
-        /* New Handler to start the Menu-Activity
-         * and close this Splash-Screen after some seconds.*/
-        new Handler().postDelayed(new Runnable(){
+        new Handler().postDelayed(new Runnable() {
+
+            /*
+             * Showing splash screen with a timer. This will be useful when you
+             * want to show case your app logo / company
+             */
+
             @Override
             public void run() {
-                /* Create an Intent that will start the Menu-Activity. */
-                Intent mainIntent = new Intent(Splash.this,MainActivity.class);
-                Splash.this.startActivity(mainIntent);
-                Splash.this.finish();
+                //Once the splash is done showing, go to the main activity
+                Intent i = new Intent(Splash.this, MainActivity.class);
+                startActivity(i);
+
+                finish();
             }
-        }, SPLASH_DISPLAY_LENGTH);
+        }, SPLASH_TIME_OUT);
     }
+
 }
