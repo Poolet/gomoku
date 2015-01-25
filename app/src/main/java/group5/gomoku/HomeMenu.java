@@ -3,7 +3,6 @@ package group5.gomoku;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -39,7 +38,7 @@ public class HomeMenu extends ActionBarActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.play_button:
-                startActivity(new Intent(this, SelectBoard.class));
+                startActivity(new Intent(this, SelectPlayer.class));
                 break;
             case R.id.rules_button:
                 break;
