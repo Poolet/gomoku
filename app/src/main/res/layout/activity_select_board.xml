@@ -4,5 +4,75 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".SelectBoard">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/menu_background"
+        android:weightSum="1"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/select_board">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Gomoku"
+            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.50" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Select board size"
+            android:id="@+id/textView2"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.06" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="10 X 10"
+            android:id="@+id/size_10_button"
+            android:layout_marginTop="0dp"
+            android:clickable="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_alignStart="@id/size_10_button"
+            android:layout_gravity="center_horizontal"
+            android:background="#00ffa877" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="15 X 15"
+            android:id="@+id/size_15_button"
+            android:clickable="true"
+            android:layout_below="@+id/size_15_button"
+            android:layout_alignLeft="@+id/size_15_button"
+            android:layout_alignStart="@+id/size_15_button"
+            android:layout_marginTop="44dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#008affc9" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="20 X 20"
+            android:id="@+id/size_20_button"
+            android:layout_marginTop="53dp"
+            android:layout_below="@+id/size_20_button"
+            android:layout_alignLeft="@+id/size_20_button"
+            android:layout_alignStart="@+id/size_20_button"
+            android:clickable="true"
+            android:layout_gravity="center_horizontal"
+            android:background="#00fffade" />
+
+    </LinearLayout>
 </RelativeLayout>
