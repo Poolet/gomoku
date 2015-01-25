@@ -25,7 +25,7 @@ public class Splash extends Activity {
             @Override
             public void run() {
                 //Once the splash is done showing, go to the main activity
-                Intent i = new Intent(Splash.this, MainActivity.class);
+                Intent i = new Intent(Splash.this, HomeMenu.class);
                 startActivity(i);
 
                 finish();
