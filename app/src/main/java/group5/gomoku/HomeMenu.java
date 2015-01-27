@@ -41,6 +41,7 @@ public class HomeMenu extends ActionBarActivity implements OnClickListener {
                 startActivity(new Intent(this, SelectPlayer.class));
                 break;
             case R.id.rules_button:
+                startActivity(new Intent(this, rules.class));
                 break;
             case R.id.settings_button:
                 break;

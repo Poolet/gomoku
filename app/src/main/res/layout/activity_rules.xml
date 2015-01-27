@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/menu_background"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context="group5.gomoku.rules">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="GOMOKU+"
+        android:id="@+id/textView7"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gomoku+ (caro) is a two-player, board game. Each player has a type of stone, black or white. In each turn, each player places a stone at a corner in the board. The winner must have a line of first five adjacent stones vertically, horizontally, or diagonally. This line must not be blocked at both ends. A line of six of more adjacent stones does not count.
+Modes:
+1. User Interaction
+   Two players take turns, place stones correctly at empty corners in the board. Players cannot place a new stone at a non-empty corner.
+   Stone existing on the board cannot be moved.
+   Players can select the size of the board before starting the game.
+   Players can see how long it takes at each turn.
+   Players can see when it is their turn.
+2. Off-line Mode
+   Two players play taking turns on the same device. The program should display the turn of each player.
+3. On-line Mode
+   Two players play taking turns, online, on the same board.
+4. AI Mode
+   You play against the device.
+"
+        android:id="@+id/textView8"
+        android:layout_below="@+id/textView7"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/button_ok" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:id="@+id/button_ok"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

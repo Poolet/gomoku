@@ -37,6 +37,7 @@ public class SelectBoard extends ActionBarActivity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.size_10_button:
+                startActivity(new Intent(this, Board.class));
                 break;
             case R.id.size_15_button:
                 break;
