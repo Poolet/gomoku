@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_splash">Splash</string>
     <string name="title_activity_select_board">SelectBoard</string>
+    <string name="title_activity_rules">rules</string>
 
 </resources>

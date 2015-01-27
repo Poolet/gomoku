@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Go-Moku</title>
+</head>
+<body>
+
+<div>
+
+    <canvas id="viewport" width="470" height="470" style="float:left; margin: 20px"></canvas>
+
+    <div style="float:left">
+
+        <div style="margin: 20px 0 0 0"><label><input type="checkbox" onclick="showTurns=!showTurns; redraw(); this.blur();" /> Draw turns numbers</label></div>
+
+        <div style="margin: 20px 0 0 0"><button onclick="if (confirm('Reset current game?')) newGame(); this.blur();">New Game</button></div>
+
+        <div style="margin: 20px 0 0 0"><button onclick="undo(); this.blur();">Undo</button></div>
+
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+var vp = document.getElementById("viewport"),
+        ctx = vp.getContext("2d");
+
+vp.addEventListener("touchstart", function(ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+
+    ev = ev.changedTouches && ev.changedTouches[0] || ev;
+
+    var x = ev.pageX - vp.offsetLeft,
+            y = ev.pageY - vp.offsetTop;
+
+    if (10 <= x && x < 460 && 10 <= y && y< 460)
+        makeTurn(Math.floor((x - 10) / 30), Math.floor((y - 10) / 30));
+});
+
+function drawBoard() {
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#555";
+    ctx.font = "10px Arial";
+    ctx.fillStyle = "#555";
+
+    ctx.beginPath();
+
+    for (var i=0; i<15; ++i) {
+        var x = 25 + 30*i;
+        ctx.moveTo(x, 5);
+        ctx.lineTo(x, 465);
+        ctx.fillText(String.fromCharCode(65+i), x+2, 10);
+    }
+
+    for (var i=0; i<15; ++i) {
+        var y = 25 + 30*i;
+        ctx.moveTo(5, y);
+        ctx.lineTo(465, y);
+        ctx.fillText(15-i, 0, y-2);
+    }
+
+    ctx.closePath();
+    ctx.stroke();
+
+
+    ctx.fillStyle = "#555";
+
+    for (var i=0; i<15; ++i) {
+        var x = 25 + 30*i;
+
+        for (var j=0; j<25; ++j) {
+            var y = 25 + 30*j;
+
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.arc(x, y, 3, 0, Math.PI*2, true);
+            ctx.closePath();
+
+            ctx.fill();
+        }
+    }
+}
+
+function drawTurn(x, y, side, text) {
+    x = 25 + 30*x;
+    y = 25 + 30*y;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 12, 0, Math.PI*2, true);
+    ctx.closePath();
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = side ? "#ddd" : "#555";
+    ctx.fillStyle = side ? "#fff" : "#333";
+
+    ctx.shadowColor = "#000";
+    ctx.shadowBlur = 10;
+
+    ctx.fill();
+//    ctx.stroke();
+
+    if (text && showTurns) {
+        ctx.shadowBlur = 0;
+        ctx.font = "10px Arial";
+        ctx.fillStyle = side ? "#000" : "#fff";
+        ctx.fillText(text, x - (ctx.measureText(text).width >> 1), y + 3);
+    }
+}
+
+function redraw() {
+    ctx.shadowBlur = 0;
+
+    ctx.fillStyle = "#555";
+    ctx.clearRect(0, 0, 470, 470);
+
+    drawBoard();
+
+    for (var i=0; i<turns.length; ++i) {
+        var t = turns[i];
+
+        drawTurn(t[0], t[1], i % 2, String(i+1));
+    }
+}
+
+
+var turns, points,
+        showTurns = false;
+
+function checkWin() {
+    var t = turns[turns.length-1],
+            x = t[0],
+            y = t[1],
+            side = 1 - (turns.length & 1),
+            s;
+
+    // check horizonal
+    var i = x-1;
+    while (0 <= i && (s=i+","+y) in points && points[s] === side)
+        --i;
+    ++i;
+    var j = x+1;
+    while (j < 15 && (s=j+","+y) in points && points[s] === side)
+        ++j;
+    --j;
+
+    if (5 <= j-i+1) {
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "red";
+
+        ctx.beginPath();
+        ctx.moveTo(25 + 30*i, 25 + 30*y);
+        ctx.lineTo(145 + 30*i, 25 + 30*y);
+        ctx.closePath();
+
+        ctx.stroke();
+
+        alert((side ? "White" : "Black")+" player won!");
+        newGame();
+        return;
+    }
+
+    // check vertical
+    var i = y-1;
+    while (0 <= i && (s=x+","+i) in points && points[s] === side)
+        --i;
+    ++i;
+    var j = y+1;
+    while (j < 15 && (s=x+","+j) in points && points[s] === side)
+        ++j;
+    --j;
+
+    if (5 <= j-i+1) {
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "red";
+
+        ctx.beginPath();
+        ctx.moveTo(25 + 30*x, 25 + 30*i);
+        ctx.lineTo(25 + 30*x, 145 + 30*i);
+        ctx.closePath();
+
+        ctx.stroke();
+
+        alert((side ? "White" : "Black")+" player won!");
+        newGame();
+        return;
+    }
+
+    // check \
+    var i = -1;
+    while (0 <= x+i && 0 <= y+i && (s=(x+i)+","+(y+i)) in points && points[s] === side)
+        --i;
+    ++i;
+    var j = 1;
+    while (x+j < 15 && y+j < 15 && (s=(x+j)+","+(y+j)) in points && points[s] === side)
+        ++j;
+    --j;
+
+    if (5 <= j-i+1) {
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "red";
+
+        ctx.beginPath();
+        ctx.moveTo(25 + 30*(x+i), 25 + 30*(y+i));
+        ctx.lineTo(145 + 30*(x+i), 145 + 30*(y+i));
+        ctx.closePath();
+
+        ctx.stroke();
+
+        alert((side ? "White" : "Black")+" player won!");
+        newGame();
+        return;
+    }
+
+    // check /
+    var i = -1;
+    while (x-i < 15 && 0 <= y+i && (s=(x-i)+","+(y+i)) in points && points[s] === side)
+        --i;
+    ++i;
+    var j = 1;
+    while (0 <= x-j && y+j<15 && (s=(x-j)+","+(y+j)) in points && points[s] === side)
+        ++j;
+    --j;
+
+    if (5 <= j-i+1) {
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "red";
+
+        ctx.beginPath();
+        ctx.moveTo(25 + 30*(x-i), 25 + 30*(y+i));
+        ctx.lineTo(25 + 30*(x-i) - 120, 145 + 30*(y+i));
+        ctx.closePath();
+
+        ctx.stroke();
+
+        alert((side ? "White" : "Black")+" player won!");
+        newGame();
+        return;
+    }
+}
+
+function makeTurn(x, y) {
+    var s = x+','+y;
+    if (s in points)
+        return;
+
+    var side = turns.length & 1;
+    turns[turns.length] = [x, y];
+    points[s] = side;
+
+    drawTurn(x, y, side, String(turns.length));
+
+    checkWin();
+}
+
+function undo() {
+    if (turns.length < 2)
+        return;
+
+    var t = turns.pop();
+    delete points[t[0]+","+t[1]];
+    redraw();
+}
+
+function newGame() {
+    turns = [];
+    points = {};
+    redraw();
+    makeTurn(7, 7);
+}
+
+newGame();
+</script>
+
+</body>
+</html>
