@@ -12,7 +12,7 @@ import android.view.View;
  */
 public class BoardView extends View implements View.OnClickListener{
     private int gridDimension;
-
+    private int[][] boardState;
     private Paint gridPaint;
 
     public BoardView(Context context, AttributeSet attrs, int defStyle) {
@@ -42,11 +42,11 @@ public class BoardView extends View implements View.OnClickListener{
         canvas.drawColor(Color.TRANSPARENT);
 
         // Draw vertical lines
-        for (int x = -this.getGridDimension(); x <= this.getGridDimension(); x = x+2)
+        for (int x = -this.getGridDimension(); x <= this.getGridDimension(); x++)
             canvas.drawLine(interpX(x), interpY(this.getGridDimension()), interpX(x), interpY(-this.getGridDimension()), gridPaint);
 
         // Draw horizontal lines
-        for (int y = -this.getGridDimension(); y <= this.getGridDimension(); y = y+2)
+        for (int y = -this.getGridDimension(); y <= this.getGridDimension(); y++)
             canvas.drawLine(interpX(-this.getGridDimension()), interpY(y), interpX(this.getGridDimension()), interpY(y), gridPaint);
     }
 
@@ -68,6 +68,8 @@ public class BoardView extends View implements View.OnClickListener{
     public void Init() {
         // Set initial grid dimension
         setGridDimension(20);
+        boardState = new int[gridDimension][gridDimension];
+
         setGridDimension(getGridDimension() + 1);
         // Grid line paint
         gridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -79,13 +81,13 @@ public class BoardView extends View implements View.OnClickListener{
     private float interpX(double x) {
         double width = (double) this.getWidth();
         return (float) ((x + this.getGridDimension())
-                / (this.getGridDimension() * 2) * width);
+                / (this.getGridDimension()) * width);
     }
 
     private float interpY(double y) {
         double height = (double) this.getHeight();
         return (float) ((y + this.getGridDimension())
-                / (this.getGridDimension() * 2) * -height + height);
+                / (this.getGridDimension()) * -height + height);
     }
 }
 
