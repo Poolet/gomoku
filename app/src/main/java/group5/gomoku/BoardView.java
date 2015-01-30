@@ -5,7 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 /**
  * Created by Tyler on 1/29/2015.
@@ -14,6 +16,7 @@ public class BoardView extends View implements View.OnClickListener{
     private int gridDimension;
     private int[][] boardState;
     private Paint gridPaint;
+    private Paint circlePaint;
 
     public BoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -34,6 +37,21 @@ public class BoardView extends View implements View.OnClickListener{
     {
 
     }
+    public boolean onTouchEvent(MotionEvent event) {
+        int x = (int) event.getX();
+        int y = (int) event.getY();
+        x = x/100;
+        y = y/100;
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                boardState[x][y] = 1;
+                String text = "X: " + x + " Y: " + y;
+
+                Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
+                toast.show();
+        }
+        return false;
+    }
     protected void onDraw(Canvas canvas) {
         // Parent draw
         super.onDraw(canvas);
@@ -41,13 +59,26 @@ public class BoardView extends View implements View.OnClickListener{
         // Background color
         canvas.drawColor(Color.TRANSPARENT);
 
-        // Draw vertical lines
-        for (int x = -this.getGridDimension(); x <= this.getGridDimension(); x++)
-            canvas.drawLine(interpX(x), interpY(this.getGridDimension()), interpX(x), interpY(-this.getGridDimension()), gridPaint);
+        // Draw grid lines
+        for (int x = -this.getGridDimension(); x <= 0; x++) {
+            canvas.drawLine(interpX(x), interpY(0), interpX(x), interpY(-this.getGridDimension()), gridPaint);
+            for (int y = -this.getGridDimension(); y <= 0; y++) {
+                canvas.drawLine(interpX(-this.getGridDimension()), interpY(y), interpX(this.getGridDimension()), interpY(y), gridPaint);
+            }
+        }
+        // Draw pieces
+        for(int x = 0; x < gridDimension - 1; x++)
+        {
+            for(int y = 0; y < gridDimension - 1; y++)
+            {
+                if(boardState[x][y] == 1)
+                {
+                    canvas.drawCircle(interpX(x), interpY(y), (this.getWidth() * (float)0.1), circlePaint);
+                }
+            }
+        }
 
-        // Draw horizontal lines
-        for (int y = -this.getGridDimension(); y <= this.getGridDimension(); y++)
-            canvas.drawLine(interpX(-this.getGridDimension()), interpY(y), interpX(this.getGridDimension()), interpY(y), gridPaint);
+
     }
 
     protected void onMeasure(int width, int height) {
@@ -67,7 +98,11 @@ public class BoardView extends View implements View.OnClickListener{
 
     public void Init() {
         // Set initial grid dimension
-        setGridDimension(20);
+        setGridDimension(10);
+        boardState = new int[gridDimension][gridDimension];
+        initGameBoard();
+        boardState[0][0] = 1;
+        boardState[2][4] = 1;
         boardState = new int[gridDimension][gridDimension];
 
         setGridDimension(getGridDimension() + 1);
@@ -76,6 +111,10 @@ public class BoardView extends View implements View.OnClickListener{
         gridPaint.setStyle(Paint.Style.STROKE);
         gridPaint.setStrokeWidth(3);
         gridPaint.setColor(Color.BLACK);
+
+        circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        circlePaint.setStyle(Paint.Style.FILL);
+        circlePaint.setColor(Color.RED);
     }
 
     private float interpX(double x) {
@@ -88,6 +127,16 @@ public class BoardView extends View implements View.OnClickListener{
         double height = (double) this.getHeight();
         return (float) ((y + this.getGridDimension())
                 / (this.getGridDimension()) * -height + height);
+    }
+
+    private void initGameBoard(){
+        for(int x = 0; x < gridDimension; x++)
+        {
+            for(int y = 0; y < gridDimension; y++)
+            {
+                boardState[x][y] = 0;
+            }
+        }
     }
 }
 
