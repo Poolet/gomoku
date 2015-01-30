@@ -14,7 +14,7 @@ public class Board extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
-        
+
         Button back=(Button) findViewById(R.id.button_back);
         back.setOnClickListener(this);
         Button quit =(Button) findViewById(R.id.button_quit);

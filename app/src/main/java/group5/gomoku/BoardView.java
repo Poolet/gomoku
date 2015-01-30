@@ -10,11 +10,10 @@ import android.view.View;
 /**
  * Created by Tyler on 1/29/2015.
  */
-public class BoardView extends View{
+public class BoardView extends View implements View.OnClickListener{
     private int gridDimension;
 
     private Paint gridPaint;
-    private Paint axisPaint;
 
     public BoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -31,6 +30,10 @@ public class BoardView extends View{
         Init();
     }
 
+    public void onClick(View v)
+    {
+
+    }
     protected void onDraw(Canvas canvas) {
         // Parent draw
         super.onDraw(canvas);
