@@ -10,7 +10,7 @@ import android.view.View;
 /**
  * Created by Tyler on 1/29/2015.
  */
-public class BoardView extends View {
+public class BoardView extends View{
     private int gridDimension;
 
     private Paint gridPaint;
@@ -47,24 +47,13 @@ public class BoardView extends View {
             canvas.drawLine(interpX(-this.getGridDimension()), interpY(y), interpX(this.getGridDimension()), interpY(y), gridPaint);
     }
 
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int measuredHeight = measureHeight(heightMeasureSpec);
-        int measuredWidth = measureWidth(widthMeasureSpec);
+    protected void onMeasure(int width, int height) {
+        super.onMeasure(width, height);
+        int measuredHeight = MeasureSpec.getSize(width) - this.getPaddingLeft() - this.getPaddingRight();
+        int measuredWidth = MeasureSpec.getSize(height);
         setMeasuredDimension(measuredWidth, measuredHeight);
     }
 
-    private int measureWidth(int widthMeasureSpec) {
-        int specSize = MeasureSpec.getSize(widthMeasureSpec) -
-                this.getPaddingLeft() - this.getPaddingRight();
-
-        return specSize;
-    }
-    private int measureHeight(int heightMeasureSpec) {
-        int specSize = MeasureSpec.getSize(heightMeasureSpec);
-
-        return specSize;
-    }
     public int getGridDimension() {
         return gridDimension;
     }
@@ -96,3 +85,5 @@ public class BoardView extends View {
                 / (this.getGridDimension() * 2) * -height + height);
     }
 }
+
+//Found some information on the math used here and the general method of grid drawing using custom views at http://www.csit.parkland.edu/~dbock/Class/csc212/Lecture/AndroidDrawing2D.html
