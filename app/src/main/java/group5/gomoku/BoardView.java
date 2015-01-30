@@ -38,16 +38,17 @@ public class BoardView extends View implements View.OnClickListener{
 
     }
     public boolean onTouchEvent(MotionEvent event) {
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-        x = x/100;
-        y = y/100;
+        int ratioX = getWidth()/(gridDimension);
+        int ratioY = getHeight()/(gridDimension);
+        int x = Math.round(event.getX()/ratioX);
+        int y = Math.round(event.getY()/ratioY);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                boardState[x][y] = 1;
+                //boardState[x][y] = 1;
                 String text = "X: " + x + " Y: " + y;
 
                 Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
+                Toast toast2 = Toast.makeText(getContext(), "Width: " + event.getX() + " Height: " + event.getY(), Toast.LENGTH_SHORT);
                 toast.show();
         }
         return false;
