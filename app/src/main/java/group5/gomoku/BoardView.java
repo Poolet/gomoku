@@ -39,11 +39,11 @@ public class BoardView extends View {
         canvas.drawColor(Color.TRANSPARENT);
 
         // Draw vertical lines
-        for (int x = -this.getGridDimension(); x <= this.getGridDimension(); ++x)
+        for (int x = -this.getGridDimension(); x <= this.getGridDimension(); x = x+2)
             canvas.drawLine(interpX(x), interpY(this.getGridDimension()), interpX(x), interpY(-this.getGridDimension()), gridPaint);
 
         // Draw horizontal lines
-        for (int y = -this.getGridDimension(); y <= this.getGridDimension(); ++y)
+        for (int y = -this.getGridDimension(); y <= this.getGridDimension(); y = y+2)
             canvas.drawLine(interpX(-this.getGridDimension()), interpY(y), interpX(this.getGridDimension()), interpY(y), gridPaint);
     }
 
@@ -75,8 +75,8 @@ public class BoardView extends View {
 
     public void Init() {
         // Set initial grid dimension
-        setGridDimension(5);
-
+        setGridDimension(20);
+        setGridDimension(getGridDimension() + 1);
         // Grid line paint
         gridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         gridPaint.setStyle(Paint.Style.STROKE);
