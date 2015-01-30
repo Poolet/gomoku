@@ -18,17 +18,19 @@
         android:text="(Player name goes here)"
         android:gravity="center_horizontal" />
 
-    <GridView
-        android:id="@+id/gridview"
-        android:numColumns="10"
-        android:gravity="center_vertical|center|fill_vertical"
-        android:columnWidth="25dp"
-        android:stretchMode="spacingWidthUniform"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+    <group5.gomoku.BoardView
+        android:id="@+id/board_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/button_scores"
         android:layout_above="@+id/button_quit"
-        android:layout_below="@+id/editText3"
-        android:paddingTop="20dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/button_back"
+        android:layout_alignEnd="@+id/button_back"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp" />
+
 
     <Button
         android:layout_width="wrap_content"
