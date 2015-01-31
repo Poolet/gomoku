@@ -7,16 +7,19 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 /**
  * Created by Tyler on 1/29/2015.
  */
 public class BoardView extends View{
+    //isBlack will track whose turn it is
     private boolean isBlack = true;
+    //gridDimension will hold information about the size of the board
     private int gridDimension;
     //Store 0 for empty square, 1 for black, 2 for white
     private int[][] boardState;
+
+    //Create some paints we will draw with, one for each player piece, and one for the grid lines
     private Paint gridPaint;
     private Paint blackPiece;
     private Paint whitePiece;
@@ -42,9 +45,12 @@ public class BoardView extends View{
         int x = Math.round(event.getX()/ratioX);
         int y = Math.round(event.getY()/ratioY);
         switch (event.getAction()) {
+            //If the user clicked somewhere...
             case MotionEvent.ACTION_DOWN:
+            //Check that we are not on the very edges of the gameboard
             if(x >= 1 && y >= 1 && x<=gridDimension - 1 && y <= gridDimension - 1)
             {
+                //Check whose turn it is and then make sure they aren't trying to put a piece somewhere that a piece already exists
                 if (isBlack && boardState[x - 1][y - 1] == 0) {
                     boardState[x - 1][y - 1] = 1;
                     isBlack = false;
@@ -53,13 +59,15 @@ public class BoardView extends View{
                     isBlack = true;
                 }
 
+                //Redraw the game board screen to reflect new pieces.
                 this.invalidate();
-                //These are some toast messages I used for testing.
-                String text = "X: " + x + "Y: " + y;
 
-                Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
+                //These are some toast messages I used for testing.
+                //String text = "X: " + x + "Y: " + y;
+
+                //Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
                 //Toast toast2 = Toast.makeText(getContext(), "Width: " + event.getX() + " Height: " + event.getY(), Toast.LENGTH_SHORT);
-                toast.show();
+                //toast.show();
             }
         }
         return false;
@@ -85,16 +93,14 @@ public class BoardView extends View{
             {
                 if(boardState[x][y] == 1)
                 {
-                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.03), blackPiece);
+                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.04), blackPiece);
                 }
                 else if(boardState[x][y] == 2)
                 {
-                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.03), whitePiece);
+                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.04), whitePiece);
                 }
             }
         }
-
-
     }
 
     protected void onMeasure(int width, int height) {
@@ -118,6 +124,7 @@ public class BoardView extends View{
         boardState = new int[gridDimension][gridDimension];
         initGameBoard();
 
+        //Add 1 to grid dimension so that when we draw, we have the right number of intersections
         setGridDimension(getGridDimension() + 1);
         // Grid line paint
         gridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -125,15 +132,18 @@ public class BoardView extends View{
         gridPaint.setStrokeWidth(3);
         gridPaint.setColor(Color.BLACK);
 
+        //black piece paint
         blackPiece = new Paint(Paint.ANTI_ALIAS_FLAG);
         blackPiece.setStyle(Paint.Style.FILL);
         blackPiece.setColor(Color.BLACK);
 
+        //White piece paint
         whitePiece = new Paint(Paint.ANTI_ALIAS_FLAG);
         whitePiece.setStyle(Paint.Style.FILL);
         whitePiece.setColor(Color.WHITE);
     }
 
+    //Convert screen clicks to the right spot on the game board
     private float interpX(double x) {
         double width = (double) this.getWidth();
         return (float) ((x + this.getGridDimension())
@@ -146,6 +156,7 @@ public class BoardView extends View{
                 / (this.getGridDimension()) * -height + height);
     }
 
+    //Set up our initial empty game board
     private void initGameBoard(){
         for(int x = 0; x < gridDimension; x++)
         {
