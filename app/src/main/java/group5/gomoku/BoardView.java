@@ -12,11 +12,14 @@ import android.widget.Toast;
 /**
  * Created by Tyler on 1/29/2015.
  */
-public class BoardView extends View implements View.OnClickListener{
+public class BoardView extends View{
+    private boolean isBlack = true;
     private int gridDimension;
+    //Store 0 for empty square, 1 for black, 2 for white
     private int[][] boardState;
     private Paint gridPaint;
-    private Paint circlePaint;
+    private Paint blackPiece;
+    private Paint whitePiece;
 
     public BoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -33,10 +36,6 @@ public class BoardView extends View implements View.OnClickListener{
         Init();
     }
 
-    public void onClick(View v)
-    {
-
-    }
     public boolean onTouchEvent(MotionEvent event) {
         int ratioX = getWidth()/(gridDimension);
         int ratioY = getHeight()/(gridDimension);
@@ -44,7 +43,16 @@ public class BoardView extends View implements View.OnClickListener{
         int y = Math.round(event.getY()/ratioY);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                boardState[x-1][y-1] = 1;
+                if(isBlack)
+                {
+                    boardState[x-1][y-1] = 1;
+                    isBlack = false;
+                }
+                else
+                {
+                    boardState[x-1][y-1] = 2;
+                    isBlack = true;
+                }
                 this.invalidate();
                 String text = "X: " + x + "Y: " + y;
 
@@ -75,7 +83,11 @@ public class BoardView extends View implements View.OnClickListener{
             {
                 if(boardState[x][y] == 1)
                 {
-                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.03), circlePaint);
+                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.03), blackPiece);
+                }
+                else if(boardState[x][y] == 2)
+                {
+                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.03), whitePiece);
                 }
             }
         }
@@ -111,9 +123,13 @@ public class BoardView extends View implements View.OnClickListener{
         gridPaint.setStrokeWidth(3);
         gridPaint.setColor(Color.BLACK);
 
-        circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        circlePaint.setStyle(Paint.Style.FILL);
-        circlePaint.setColor(Color.BLACK);
+        blackPiece = new Paint(Paint.ANTI_ALIAS_FLAG);
+        blackPiece.setStyle(Paint.Style.FILL);
+        blackPiece.setColor(Color.BLACK);
+
+        whitePiece = new Paint(Paint.ANTI_ALIAS_FLAG);
+        whitePiece.setStyle(Paint.Style.FILL);
+        whitePiece.setColor(Color.WHITE);
     }
 
     private float interpX(double x) {
