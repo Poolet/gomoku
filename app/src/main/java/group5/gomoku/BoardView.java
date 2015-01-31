@@ -43,23 +43,24 @@ public class BoardView extends View{
         int y = Math.round(event.getY()/ratioY);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(isBlack && boardState[x-1][y-1] == 0)
-                {
-                    boardState[x-1][y-1] = 1;
+            if(x >= 1 && y >= 1 && x<=gridDimension - 1 && y <= gridDimension - 1)
+            {
+                if (isBlack && boardState[x - 1][y - 1] == 0) {
+                    boardState[x - 1][y - 1] = 1;
                     isBlack = false;
-                }
-                else if(!isBlack && boardState[x-1][y-1] == 0)
-                {
-                    boardState[x-1][y-1] = 2;
+                } else if (!isBlack && boardState[x - 1][y - 1] == 0) {
+                    boardState[x - 1][y - 1] = 2;
                     isBlack = true;
                 }
 
                 this.invalidate();
+                //These are some toast messages I used for testing.
                 String text = "X: " + x + "Y: " + y;
 
                 Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
-                Toast toast2 = Toast.makeText(getContext(), "Width: " + event.getX() + " Height: " + event.getY(), Toast.LENGTH_SHORT);
+                //Toast toast2 = Toast.makeText(getContext(), "Width: " + event.getX() + " Height: " + event.getY(), Toast.LENGTH_SHORT);
                 toast.show();
+            }
         }
         return false;
     }
