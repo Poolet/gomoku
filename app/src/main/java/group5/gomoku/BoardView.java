@@ -46,7 +46,7 @@ public class BoardView extends View implements View.OnClickListener{
             case MotionEvent.ACTION_DOWN:
                 boardState[x-1][y-1] = 1;
                 this.invalidate();
-                String text = "X: " + x + " Y: " + y;
+                String text = "X: " + x + "Y: " + y;
 
                 Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
                 Toast toast2 = Toast.makeText(getContext(), "Width: " + event.getX() + " Height: " + event.getY(), Toast.LENGTH_SHORT);
@@ -75,7 +75,7 @@ public class BoardView extends View implements View.OnClickListener{
             {
                 if(boardState[x][y] == 1)
                 {
-                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(y-(gridDimension-1)), (this.getWidth() * (float)0.03), circlePaint);
+                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.03), circlePaint);
                 }
             }
         }
@@ -83,10 +83,6 @@ public class BoardView extends View implements View.OnClickListener{
 
     }
 
-    protected void draw(Canvas canvas, int x, int y)
-    {
-        canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(y-(gridDimension-1)), (this.getWidth() * (float)0.03), circlePaint);
-    }
     protected void onMeasure(int width, int height) {
         super.onMeasure(width, height);
         int measuredHeight = MeasureSpec.getSize(width) - this.getPaddingLeft() - this.getPaddingRight();
