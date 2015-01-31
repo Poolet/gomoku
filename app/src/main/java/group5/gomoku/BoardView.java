@@ -44,7 +44,8 @@ public class BoardView extends View implements View.OnClickListener{
         int y = Math.round(event.getY()/ratioY);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                //boardState[x][y] = 1;
+                boardState[x-1][y-1] = 1;
+                this.invalidate();
                 String text = "X: " + x + " Y: " + y;
 
                 Toast toast = Toast.makeText(getContext(), text, Toast.LENGTH_SHORT);
@@ -74,7 +75,7 @@ public class BoardView extends View implements View.OnClickListener{
             {
                 if(boardState[x][y] == 1)
                 {
-                    canvas.drawCircle(interpX(x), interpY(y), (this.getWidth() * (float)0.1), circlePaint);
+                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(y-(gridDimension-1)), (this.getWidth() * (float)0.03), circlePaint);
                 }
             }
         }
@@ -82,6 +83,10 @@ public class BoardView extends View implements View.OnClickListener{
 
     }
 
+    protected void draw(Canvas canvas, int x, int y)
+    {
+        canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(y-(gridDimension-1)), (this.getWidth() * (float)0.03), circlePaint);
+    }
     protected void onMeasure(int width, int height) {
         super.onMeasure(width, height);
         int measuredHeight = MeasureSpec.getSize(width) - this.getPaddingLeft() - this.getPaddingRight();
@@ -102,9 +107,6 @@ public class BoardView extends View implements View.OnClickListener{
         setGridDimension(10);
         boardState = new int[gridDimension][gridDimension];
         initGameBoard();
-        boardState[0][0] = 1;
-        boardState[2][4] = 1;
-        boardState = new int[gridDimension][gridDimension];
 
         setGridDimension(getGridDimension() + 1);
         // Grid line paint
@@ -115,7 +117,7 @@ public class BoardView extends View implements View.OnClickListener{
 
         circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         circlePaint.setStyle(Paint.Style.FILL);
-        circlePaint.setColor(Color.RED);
+        circlePaint.setColor(Color.BLACK);
     }
 
     private float interpX(double x) {
