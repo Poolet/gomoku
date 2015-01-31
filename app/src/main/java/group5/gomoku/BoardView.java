@@ -43,16 +43,17 @@ public class BoardView extends View{
         int y = Math.round(event.getY()/ratioY);
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(isBlack)
+                if(isBlack && boardState[x-1][y-1] == 0)
                 {
                     boardState[x-1][y-1] = 1;
                     isBlack = false;
                 }
-                else
+                else if(!isBlack && boardState[x-1][y-1] == 0)
                 {
                     boardState[x-1][y-1] = 2;
                     isBlack = true;
                 }
+
                 this.invalidate();
                 String text = "X: " + x + "Y: " + y;
 
