@@ -59,8 +59,8 @@
         android:layout_below="@+id/textView6"
         android:layout_toLeftOf="@+id/button_back"
         android:layout_toRightOf="@+id/button_quit"
-        android:layout_toEndOf="@+id/button_quit"
-        android:layout_above="@+id/gridview" />
+        android:layout_toEndOf="@+id/button_quit" />
+        //android:layout_above="@+id/gridview"
 
     <EditText
         android:layout_width="wrap_content"
@@ -102,6 +102,7 @@
         android:layout_alignEnd="@+id/button_scores"
         android:gravity="center_vertical|bottom|center_horizontal"
         android:textSize="40dp" />
+
 
 
 </RelativeLayout>

@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 /**
  * Created by Tyler on 1/29/2015.
@@ -39,6 +41,129 @@ public class BoardView extends View{
         Init();
     }
 
+    //Show pop up message when player wins
+    private void showSimplePopUp() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setTitle("Message")
+                .setMessage("Success!")
+                .setNeutralButton("OK", null);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private boolean checkSuccessHorizontal(int x, int y, int color) {
+
+        int i, pos_start, pos_end;
+        int num_uniq = 5;
+        int oppon_color = (color == 1) ? 2 : 1;
+
+        //Check horizontal
+        i = 0;
+        while ((x - i) >= 0 && boardState[x - i][y] == color)
+            i++;
+
+        if (i > num_uniq)
+            return false;
+
+        pos_start = x - i + 1;
+        i = 0;
+        while (boardState[pos_start + i][y] == color && i < gridDimension)
+            i++;
+
+        if (i != num_uniq)
+            return false;
+
+        pos_end = pos_start + i - 1;
+        if (boardState[pos_start-1][y] == oppon_color &&
+                boardState[pos_end+1][y] == oppon_color)
+            return false;
+
+        if (pos_start == 0 || pos_end == gridDimension - 1 ||
+            boardState[pos_start-1][y] != color || boardState[pos_end+1][y] != color)
+            return true;
+
+        return false;
+    }
+
+    private boolean checkSuccessVertical(int x, int y, int color) {
+
+        int i, pos_start, pos_end;
+        int num_uniq = 5;
+        int oppon_color = (color == 1) ? 2 : 1;
+
+        //Check vertical
+        i = 0;
+        while ((y - i) >= 0 && boardState[x][y-i] == color)
+            i++;
+
+        if (i > num_uniq)
+            return false;
+
+        pos_start = y - i + 1;
+        i = 0;
+        while (boardState[x][pos_start + i] == color && i < gridDimension)
+            i++;
+
+        if (i != num_uniq)
+            return false;
+
+        pos_end = pos_start + i - 1;
+        if (boardState[x][pos_start-1] == oppon_color &&
+                boardState[x][pos_end+1] == oppon_color)
+            return false;
+
+        if (pos_start == 0 || pos_end == gridDimension - 1 ||
+                boardState[x][pos_start-1] != color || boardState[x][pos_end+1] != color)
+            return true;
+
+        return false;
+    }
+
+    private boolean checkSuccessDiagonal(int x, int y, int color) {
+
+        int i;
+        int pos_start_x, pos_end_x;
+        int pos_start_y, pos_end_y;
+        int num_uniq = 5;
+        int oppon_color = (color == 1) ? 2 : 1;
+
+        //Check vertical
+        i = 0;
+        while ((x - i) >=0 && (y - i) >= 0 &&
+                boardState[x-i][y-i] == color)
+            i++;
+
+        if (i > num_uniq)
+            return false;
+
+        pos_start_x = x - i + 1;
+        pos_start_y = y - i + 1;
+        i = 0;
+        while (boardState[pos_start_x + i][pos_start_y + i] == color &&
+                i < gridDimension)
+            i++;
+
+        if (i != num_uniq)
+            return false;
+
+        pos_end_x = pos_start_x + i - 1;
+        pos_end_y = pos_start_y + i - 1;
+        if (boardState[pos_start_x-1][pos_start_y-1] == oppon_color &&
+                boardState[pos_end_x+1][pos_end_y+1] == oppon_color)
+            return false;
+
+        if (pos_start_x == 0 || pos_end_x == gridDimension - 1 ||
+                pos_start_y == 0 || pos_end_y == gridDimension - 1 ||
+                boardState[pos_start_x-1][pos_start_y-1] != color ||
+                boardState[pos_end_x+1][pos_end_y+1] != color)
+            return true;
+
+        return false;
+    }
+
+
     public boolean onTouchEvent(MotionEvent event) {
         int ratioX = getWidth()/(gridDimension);
         int ratioY = getHeight()/(gridDimension);
@@ -53,11 +178,18 @@ public class BoardView extends View{
                 //Check whose turn it is and then make sure they aren't trying to put a piece somewhere that a piece already exists
                 if (isBlack && boardState[x - 1][y - 1] == 0) {
                     boardState[x - 1][y - 1] = 1;
+                    //showSimplePopUp();
                     isBlack = false;
+
                 } else if (!isBlack && boardState[x - 1][y - 1] == 0) {
                     boardState[x - 1][y - 1] = 2;
                     isBlack = true;
                 }
+
+                if (checkSuccessHorizontal(x-1, y-1, isBlack ? 2: 1) ||
+                        checkSuccessVertical(x-1, y-1, isBlack ? 2: 1) ||
+                        checkSuccessDiagonal(x-1, y-1, isBlack ? 2: 1))
+                    showSimplePopUp();
 
                 //Redraw the game board screen to reflect new pieces.
                 this.invalidate();
