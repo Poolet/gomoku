@@ -69,18 +69,20 @@ public class BoardView extends View{
 
         pos_start = x - i + 1;
         i = 0;
-        while (boardState[pos_start + i][y] == color && i < gridDimension)
+        while ((pos_start + i < gridDimension-1) &&
+                boardState[pos_start + i][y] == color)
             i++;
 
         if (i != num_uniq)
             return false;
 
         pos_end = pos_start + i - 1;
-        if (boardState[pos_start-1][y] == oppon_color &&
+        if (pos_start != 0 && pos_end != gridDimension-2 &&
+                boardState[pos_start-1][y] == oppon_color &&
                 boardState[pos_end+1][y] == oppon_color)
             return false;
 
-        if (pos_start == 0 || pos_end == gridDimension - 1 ||
+        if (pos_start == 0 || pos_end == gridDimension - 2 ||
             boardState[pos_start-1][y] != color || boardState[pos_end+1][y] != color)
             return true;
 
@@ -103,25 +105,27 @@ public class BoardView extends View{
 
         pos_start = y - i + 1;
         i = 0;
-        while (boardState[x][pos_start + i] == color && i < gridDimension)
+        while ((pos_start+i < gridDimension-1) &&
+                boardState[x][pos_start + i] == color)
             i++;
 
         if (i != num_uniq)
             return false;
 
         pos_end = pos_start + i - 1;
-        if (boardState[x][pos_start-1] == oppon_color &&
+        if (pos_start != 0 && pos_end != gridDimension-2 &&
+                boardState[x][pos_start-1] == oppon_color &&
                 boardState[x][pos_end+1] == oppon_color)
             return false;
 
-        if (pos_start == 0 || pos_end == gridDimension - 1 ||
+        if (pos_start == 0 || pos_end == gridDimension - 2 ||
                 boardState[x][pos_start-1] != color || boardState[x][pos_end+1] != color)
             return true;
 
         return false;
     }
 
-    private boolean checkSuccessDiagonal(int x, int y, int color) {
+    private boolean checkSuccessDiagonal1(int x, int y, int color) {
 
         int i;
         int pos_start_x, pos_end_x;
@@ -131,7 +135,7 @@ public class BoardView extends View{
 
         //Check vertical
         i = 0;
-        while ((x - i) >=0 && (y - i) >= 0 &&
+        while ((x - i) >= 0 && (y - i) >= 0 &&
                 boardState[x-i][y-i] == color)
             i++;
 
@@ -141,8 +145,9 @@ public class BoardView extends View{
         pos_start_x = x - i + 1;
         pos_start_y = y - i + 1;
         i = 0;
-        while (boardState[pos_start_x + i][pos_start_y + i] == color &&
-                i < gridDimension)
+        while ((pos_start_x + i < gridDimension - 1) &&
+            (pos_start_y + i < gridDimension - 1) &&
+                boardState[pos_start_x + i][pos_start_y + i] == color)
             i++;
 
         if (i != num_uniq)
@@ -150,14 +155,62 @@ public class BoardView extends View{
 
         pos_end_x = pos_start_x + i - 1;
         pos_end_y = pos_start_y + i - 1;
-        if (boardState[pos_start_x-1][pos_start_y-1] == oppon_color &&
+
+        if (pos_start_x != 0 && pos_start_y != 0 &&
+                pos_end_x != gridDimension-2 && pos_end_y != gridDimension-2 &&
+                boardState[pos_start_x-1][pos_start_y-1] == oppon_color &&
                 boardState[pos_end_x+1][pos_end_y+1] == oppon_color)
             return false;
 
-        if (pos_start_x == 0 || pos_end_x == gridDimension - 1 ||
-                pos_start_y == 0 || pos_end_y == gridDimension - 1 ||
+        if (pos_start_x == 0 || pos_end_x == gridDimension - 2 ||
+                pos_start_y == 0 || pos_end_y == gridDimension - 2 ||
                 boardState[pos_start_x-1][pos_start_y-1] != color ||
                 boardState[pos_end_x+1][pos_end_y+1] != color)
+            return true;
+
+        return false;
+    }
+
+    private boolean checkSuccessDiagonal2(int x, int y, int color) {
+
+        int i;
+        int pos_start_x, pos_end_x;
+        int pos_start_y, pos_end_y;
+        int num_uniq = 5;
+        int oppon_color = (color == 1) ? 2 : 1;
+
+        i = 0;
+        while ((x - i) >= 0 && (y + i) < gridDimension - 1 &&
+                boardState[x-i][y+i] == color)
+            i++;
+
+        if (i > num_uniq)
+            return false;
+
+        pos_start_x = x - i + 1;
+        pos_start_y = y + i - 1;
+        i = 0;
+        while ((pos_start_x + i < gridDimension - 1) &&
+                (pos_start_y - i >= 0) &&
+                boardState[pos_start_x + i][pos_start_y - i] == color)
+            i++;
+
+        if (i != num_uniq)
+            return false;
+
+        pos_end_x = pos_start_x + i - 1;
+        pos_end_y = pos_start_y - i + 1;
+
+        if (pos_start_x != 0 && pos_start_y != gridDimension-2 &&
+                pos_end_x != gridDimension-2 && pos_end_y != 0 &&
+                boardState[pos_start_x-1][pos_start_y+1] == oppon_color &&
+                boardState[pos_end_x+1][pos_end_y-1] == oppon_color)
+            return false;
+
+        if (pos_start_x == 0 || pos_end_x == gridDimension - 2 ||
+                pos_start_y == gridDimension-2 || pos_end_y == 0 ||
+                boardState[pos_start_x-1][pos_start_y+1] != color ||
+                boardState[pos_end_x+1][pos_end_y-1] != color)
             return true;
 
         return false;
@@ -188,7 +241,8 @@ public class BoardView extends View{
 
                 if (checkSuccessHorizontal(x-1, y-1, isBlack ? 2: 1) ||
                         checkSuccessVertical(x-1, y-1, isBlack ? 2: 1) ||
-                        checkSuccessDiagonal(x-1, y-1, isBlack ? 2: 1))
+                        checkSuccessDiagonal1(x-1, y-1, isBlack ? 2: 1) ||
+                    checkSuccessDiagonal2(x-1, y-1, isBlack ? 2: 1))
                     showSimplePopUp();
 
                 //Redraw the game board screen to reflect new pieces.
