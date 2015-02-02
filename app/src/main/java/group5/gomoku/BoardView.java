@@ -9,11 +9,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+
+
+import static android.support.v4.app.ActivityCompat.startActivity;
 
 /**
  * Created by Tyler on 1/29/2015.
  */
 public class BoardView extends View{
+
     //isBlack will track whose turn it is
     private boolean isBlack = true;
     //gridDimension will hold information about the size of the board
@@ -41,16 +46,74 @@ public class BoardView extends View{
         Init();
     }
 
-    //Show pop up message when player wins
-    private void showSimplePopUp() {
+    //Show pop up message when player 1 wins
+    private void showSimplePopUpBlackWins() {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
-        builder.setTitle("Message")
-                .setMessage("Success!")
-                .setNeutralButton("OK", null);
 
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this.getContext());
+        helpBuilder.setCancelable(false);
+        helpBuilder.setTitle("     Game Over");
+        helpBuilder.setMessage("      Player 1 Wins");
+        helpBuilder.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i=new Intent();
+                i.setClass(getContext(),Board.class);
+                getContext().startActivity(i);
+            }
+
+        });
+        helpBuilder.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Intent i=new Intent();
+                i.setClass(getContext(),Scores.class);
+                getContext().startActivity(i);
+            }
+        });
+
+        // Remember, create doesn't show the dialog
+        AlertDialog helpDialog = helpBuilder.create();
+        helpDialog.show();
+
+    }
+
+
+    //Show pop up message when player 2 wins
+    private void showSimplePopUpWhiteWins() {
+
+
+        AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this.getContext());
+        helpBuilder.setCancelable(false);
+        helpBuilder.setTitle("     Game Over");
+        helpBuilder.setMessage("      Player 2 Wins");
+        helpBuilder.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i=new Intent();
+                i.setClass(getContext(),Board.class);
+                getContext().startActivity(i);
+            }
+
+        });
+        helpBuilder.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i=new Intent();
+                i.setClass(getContext(),Scores.class);
+                getContext().startActivity(i);
+            }
+
+
+        });
+
+        // Remember, create doesn't show the dialog
+        AlertDialog helpDialog = helpBuilder.create();
+        helpDialog.show();
+
     }
 
     private boolean checkSuccessHorizontal(int x, int y, int color) {
@@ -231,19 +294,26 @@ public class BoardView extends View{
                 //Check whose turn it is and then make sure they aren't trying to put a piece somewhere that a piece already exists
                 if (isBlack && boardState[x - 1][y - 1] == 0) {
                     boardState[x - 1][y - 1] = 1;
-                    //showSimplePopUp();
                     isBlack = false;
 
                 } else if (!isBlack && boardState[x - 1][y - 1] == 0) {
                     boardState[x - 1][y - 1] = 2;
                     isBlack = true;
                 }
-
-                if (checkSuccessHorizontal(x-1, y-1, isBlack ? 2: 1) ||
-                        checkSuccessVertical(x-1, y-1, isBlack ? 2: 1) ||
-                        checkSuccessDiagonal1(x-1, y-1, isBlack ? 2: 1) ||
-                    checkSuccessDiagonal2(x-1, y-1, isBlack ? 2: 1))
-                    showSimplePopUp();
+                // check adjacent stones in the vertical,horizontal and diagonal direction and pop up message if success
+                if (isBlack) {
+                    if (checkSuccessHorizontal(x - 1, y - 1, 2) ||
+                            checkSuccessVertical(x - 1, y - 1, 2) ||
+                            checkSuccessDiagonal1(x - 1, y - 1, 2) ||
+                            checkSuccessDiagonal2(x - 1, y - 1, 2))
+                        showSimplePopUpWhiteWins();
+                } else if (!isBlack) {
+                    if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
+                            checkSuccessVertical(x - 1, y - 1, 1) ||
+                            checkSuccessDiagonal1(x - 1, y - 1, 1) ||
+                            checkSuccessDiagonal2(x - 1, y - 1, 1))
+                        showSimplePopUpBlackWins();
+                }
 
                 //Redraw the game board screen to reflect new pieces.
                 this.invalidate();
