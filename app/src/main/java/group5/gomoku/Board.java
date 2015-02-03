@@ -11,9 +11,16 @@ import android.widget.Button;
  */
 public class Board extends Activity implements View.OnClickListener{
 
+    BoardView grid;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+        Bundle bundle = getIntent().getExtras();
+        int boardSize = bundle.getInt("boardSize");
+        grid = (BoardView)findViewById(R.id.board_grid);
+        grid.setGridDimension(boardSize);
+        grid.Init();
+        grid.invalidate();
 
         Button back=(Button) findViewById(R.id.button_back);
         back.setOnClickListener(this);

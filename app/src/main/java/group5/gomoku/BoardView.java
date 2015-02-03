@@ -1,18 +1,15 @@
 package group5.gomoku;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-
-
-import static android.support.v4.app.ActivityCompat.startActivity;
 
 /**
  * Created by Tyler on 1/29/2015.
@@ -23,6 +20,8 @@ public class BoardView extends View{
     private boolean isBlack = true;
     //gridDimension will hold information about the size of the board
     private int gridDimension;
+    //circleSize holds information about the size of the pieces.
+    private float circleSize;
     //Store 0 for empty square, 1 for black, 2 for white
     private int[][] boardState;
 
@@ -288,7 +287,7 @@ public class BoardView extends View{
         switch (event.getAction()) {
             //If the user clicked somewhere...
             case MotionEvent.ACTION_DOWN:
-            //Check that we are not on the very edges of the gameboard
+            //Check that we are not on the very edges of the game board
             if(x >= 1 && y >= 1 && x<=gridDimension - 1 && y <= gridDimension - 1)
             {
                 //Check whose turn it is and then make sure they aren't trying to put a piece somewhere that a piece already exists
@@ -333,27 +332,27 @@ public class BoardView extends View{
         super.onDraw(canvas);
 
         // Background color
-        canvas.drawColor(Color.TRANSPARENT);
+            canvas.drawColor(Color.TRANSPARENT);
 
-        // Draw grid lines
-        for (int x = -this.getGridDimension(); x <= 0; x++) {
-            canvas.drawLine(interpX(x), interpY(0), interpX(x), interpY(-this.getGridDimension()), gridPaint);
-            for (int y = -this.getGridDimension(); y <= 0; y++) {
-                canvas.drawLine(interpX(-this.getGridDimension()), interpY(y), interpX(this.getGridDimension()), interpY(y), gridPaint);
+            // Draw grid lines
+            for (int x = -this.getGridDimension(); x <= 0; x++) {
+                canvas.drawLine(interpX(x), interpY(0), interpX(x), interpY(-this.getGridDimension()), gridPaint);
+                for (int y = -this.getGridDimension(); y <= 0; y++) {
+                    canvas.drawLine(interpX(-this.getGridDimension()), interpY(y), interpX(this.getGridDimension()), interpY(y), gridPaint);
+                }
             }
-        }
         // Draw pieces
-        for(int x = 0; x < gridDimension - 1; x++)
+        for(int x = 0; x < gridDimension - 1 && x>=0; x++)
         {
-            for(int y = 0; y < gridDimension - 1; y++)
+            for(int y = 0; y < gridDimension - 1 &&y>=0; y++)
             {
                 if(boardState[x][y] == 1)
                 {
-                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.04), blackPiece);
+                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * circleSize), blackPiece);
                 }
                 else if(boardState[x][y] == 2)
                 {
-                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * (float)0.04), whitePiece);
+                    canvas.drawCircle(interpX(x-(gridDimension-1)), interpY(-y - 1), (this.getWidth() * circleSize), whitePiece);
                 }
             }
         }
@@ -376,8 +375,19 @@ public class BoardView extends View{
 
     public void Init() {
         // Set initial grid dimension
-        setGridDimension(10);
         boardState = new int[gridDimension][gridDimension];
+        if(gridDimension < 15)
+        {
+            circleSize = (float)0.04;
+        }
+        else if(gridDimension < 20)
+        {
+            circleSize = (float)0.03;
+        }
+        else if(gridDimension < 25)
+        {
+            circleSize = (float)0.02;
+        }
         initGameBoard();
 
         //Add 1 to grid dimension so that when we draw, we have the right number of intersections

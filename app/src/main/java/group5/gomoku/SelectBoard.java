@@ -35,13 +35,26 @@ public class SelectBoard extends ActionBarActivity implements OnClickListener {
     }
 
     public void onClick(View v) {
+        Intent i;
+        Bundle boardSize = new Bundle();
         switch (v.getId()) {
             case R.id.size_10_button:
-                startActivity(new Intent(this, Board.class));
+                i = new Intent(this, Board.class);
+                boardSize.putInt("boardSize", 10);
+                i.putExtras(boardSize);
+                startActivity(i);
                 break;
             case R.id.size_15_button:
+                i = new Intent(this, Board.class);
+                boardSize.putInt("boardSize", 15);
+                i.putExtras(boardSize);
+                startActivity(i);
                 break;
             case R.id.size_20_button:
+                i = new Intent(this, Board.class);
+                boardSize.putInt("boardSize", 20);
+                i.putExtras(boardSize);
+                startActivity(i);
                 break;
         }
     }
