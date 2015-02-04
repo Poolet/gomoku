@@ -10,12 +10,16 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 /**
  * Created by Tyler on 1/29/2015.
  */
 public class BoardView extends View{
 
+    private Board parent;
+    //playerName will hold the text view that contains the current player.
+    TextView playerName;
     //isBlack will track whose turn it is
     private boolean isBlack = true;
     //gridDimension will hold information about the size of the board
@@ -294,10 +298,14 @@ public class BoardView extends View{
                 if (isBlack && boardState[x - 1][y - 1] == 0) {
                     boardState[x - 1][y - 1] = 1;
                     isBlack = false;
+                    if(parent != null)
+                        playerName.setText("Player 2");
 
                 } else if (!isBlack && boardState[x - 1][y - 1] == 0) {
                     boardState[x - 1][y - 1] = 2;
                     isBlack = true;
+                    if(parent != null)
+                        playerName.setText("Player 1");
                 }
                 // check adjacent stones in the vertical,horizontal and diagonal direction and pop up message if success
                 if (isBlack) {
@@ -374,6 +382,11 @@ public class BoardView extends View{
     }
 
     public void Init() {
+        if(parent != null)
+        {
+            playerName = (TextView)parent.findViewById(R.id.playerName);
+            playerName.setText("Player 1");
+        }
         // Set initial grid dimension
         boardState = new int[gridDimension][gridDimension];
         if(gridDimension < 15)
@@ -431,6 +444,10 @@ public class BoardView extends View{
                 boardState[x][y] = 0;
             }
         }
+    }
+    //Used to set parent of this view
+    public void setParent(Board parent) {
+        this.parent = parent;
     }
 }
 
