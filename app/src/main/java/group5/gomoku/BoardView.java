@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,9 +18,16 @@ import android.widget.TextView;
  */
 public class BoardView extends View{
 
+    //Score text views
+    private TextView score1;
+    private TextView score2;
+    //Score variables;
+    private int scoreValue1;
+    private int scoreValue2;
+    //parent holds the containing board activity
     private Board parent;
     //playerName will hold the text view that contains the current player.
-    TextView playerName;
+    private TextView playerName;
     //isBlack will track whose turn it is
     private boolean isBlack = true;
     //gridDimension will hold information about the size of the board
@@ -60,8 +68,13 @@ public class BoardView extends View{
         helpBuilder.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
+                Bundle gameInfo = new Bundle();
+                gameInfo.putInt("boardSize", gridDimension-1);
+                gameInfo.putInt("score1", scoreValue1);
+                gameInfo.putInt("score2", scoreValue2);
                 Intent i=new Intent();
                 i.setClass(getContext(),Board.class);
+                i.putExtras(gameInfo);
                 getContext().startActivity(i);
             }
 
@@ -95,8 +108,13 @@ public class BoardView extends View{
         helpBuilder.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
+                Bundle gameInfo = new Bundle();
+                gameInfo.putInt("boardSize", gridDimension-1);
+                gameInfo.putInt("score1", scoreValue1);
+                gameInfo.putInt("score2", scoreValue2);
                 Intent i=new Intent();
                 i.setClass(getContext(),Board.class);
+                i.putExtras(gameInfo);
                 getContext().startActivity(i);
             }
 
@@ -313,13 +331,21 @@ public class BoardView extends View{
                             checkSuccessVertical(x - 1, y - 1, 2) ||
                             checkSuccessDiagonal1(x - 1, y - 1, 2) ||
                             checkSuccessDiagonal2(x - 1, y - 1, 2))
+                    {
+                        scoreValue2++;
+                        score2.setText("" + scoreValue2);
                         showSimplePopUpWhiteWins();
+                    }
                 } else if (!isBlack) {
                     if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
                             checkSuccessVertical(x - 1, y - 1, 1) ||
                             checkSuccessDiagonal1(x - 1, y - 1, 1) ||
                             checkSuccessDiagonal2(x - 1, y - 1, 1))
+                    {
+                        scoreValue1++;
+                        score1.setText("" + scoreValue1);
                         showSimplePopUpBlackWins();
+                    }
                 }
 
                 //Redraw the game board screen to reflect new pieces.
@@ -384,6 +410,10 @@ public class BoardView extends View{
     public void Init() {
         if(parent != null)
         {
+            score1 = (TextView)parent.findViewById(R.id.score1);
+            score1.setText("" + scoreValue1);
+            score2 = (TextView)parent.findViewById(R.id.score2);
+            score2.setText("" + scoreValue2);
             playerName = (TextView)parent.findViewById(R.id.playerName);
             playerName.setText("Player 1");
         }
@@ -449,6 +479,10 @@ public class BoardView extends View{
     public void setParent(Board parent) {
         this.parent = parent;
     }
+
+    public void setScoreValue1(int x) { scoreValue1 = x;}
+
+    public void setScoreValue2(int x) { scoreValue2 = x;}
 }
 
 //Found some information on the math used here and the general method of grid drawing using custom views at http://www.csit.parkland.edu/~dbock/Class/csc212/Lecture/AndroidDrawing2D.html

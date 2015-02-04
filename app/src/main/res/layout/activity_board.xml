@@ -60,36 +60,7 @@
         android:layout_toLeftOf="@+id/button_back"
         android:layout_toRightOf="@+id/button_quit"
         android:layout_toEndOf="@+id/button_quit" />
-        //android:layout_above="@+id/gridview"
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:id="@+id/editText3"
-        android:layout_below="@+id/playerName"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/button_scores"
-        android:layout_toStartOf="@+id/button_scores"
-        android:text="3"
-        android:gravity="center_horizontal" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:id="@+id/editText4"
-        android:layout_alignTop="@+id/editText3"
-        android:layout_alignRight="@+id/button_back"
-        android:layout_alignEnd="@+id/button_back"
-        android:layout_toRightOf="@+id/button_scores"
-        android:layout_toEndOf="@+id/button_scores"
-        android:text="5"
-        android:elegantTextHeight="false"
-        android:gravity="center_horizontal" />
+    //android:layout_above="@+id/gridview"
 
     <Chronometer
         android:layout_width="wrap_content"
@@ -103,6 +74,36 @@
         android:gravity="center_vertical|bottom|center_horizontal"
         android:textSize="40dp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/score2"
+        android:textAlignment="center"
+        android:text="0"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_above="@+id/board_grid"
+        android:layout_alignRight="@+id/button_back"
+        android:layout_alignEnd="@+id/button_back"
+        android:layout_alignLeft="@+id/button_back"
+        android:layout_alignStart="@+id/button_back"
+        android:layout_alignTop="@+id/button_scores"
+        android:textSize="40dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/score1"
+        android:textAlignment="center"
+        android:text="0"
+        android:gravity="center_vertical|center_horizontal"
+        android:textSize="40dp"
+        android:layout_alignTop="@+id/button_scores"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/button_scores"
+        android:layout_toStartOf="@+id/button_scores" />
 
 
 </RelativeLayout>

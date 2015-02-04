@@ -12,6 +12,9 @@ import android.widget.Button;
 public class Board extends Activity implements View.OnClickListener{
 
     BoardView grid;
+    int score1;
+    int score2;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
@@ -19,6 +22,17 @@ public class Board extends Activity implements View.OnClickListener{
         int boardSize = bundle.getInt("boardSize");
         grid = (BoardView)findViewById(R.id.board_grid);
         grid.setParent(this);
+        try {
+            score1 = bundle.getInt("score1");
+            score2 = bundle.getInt("score2");
+        }catch(NullPointerException e)
+        {
+            score1 = 0;
+            score2 = 0;
+        }
+
+        grid.setScoreValue1(score1);
+        grid.setScoreValue2(score2);
         grid.setGridDimension(boardSize);
         grid.Init();
         grid.invalidate();
