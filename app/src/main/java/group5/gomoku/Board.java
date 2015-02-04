@@ -18,6 +18,7 @@ public class Board extends Activity implements View.OnClickListener{
         Bundle bundle = getIntent().getExtras();
         int boardSize = bundle.getInt("boardSize");
         grid = (BoardView)findViewById(R.id.board_grid);
+        grid.setParent(this);
         grid.setGridDimension(boardSize);
         grid.Init();
         grid.invalidate();
