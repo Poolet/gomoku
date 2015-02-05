@@ -20,6 +20,7 @@ public class Board extends Activity implements View.OnClickListener{
         setContentView(R.layout.activity_board);
         Bundle bundle = getIntent().getExtras();
         int boardSize = bundle.getInt("boardSize");
+        boolean AI = bundle.getBoolean("AI");
         grid = (BoardView)findViewById(R.id.board_grid);
         grid.setParent(this);
         try {
@@ -34,6 +35,7 @@ public class Board extends Activity implements View.OnClickListener{
         grid.setScoreValue1(score1);
         grid.setScoreValue2(score2);
         grid.setGridDimension(boardSize);
+        grid.setAI(AI);
         grid.Init();
         grid.invalidate();
 

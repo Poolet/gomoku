@@ -13,6 +13,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.Random;
+
 /**
  * Created by Tyler on 1/29/2015.
  */
@@ -36,6 +38,7 @@ public class BoardView extends View{
     private float circleSize;
     //Store 0 for empty square, 1 for black, 2 for white
     private int[][] boardState;
+    private boolean AI = false;
 
     //Create some paints we will draw with, one for each player piece, and one for the grid lines
     private Paint gridPaint;
@@ -72,6 +75,7 @@ public class BoardView extends View{
                 gameInfo.putInt("boardSize", gridDimension-1);
                 gameInfo.putInt("score1", scoreValue1);
                 gameInfo.putInt("score2", scoreValue2);
+                gameInfo.putBoolean("AI", AI);
                 Intent i=new Intent();
                 i.setClass(getContext(),Board.class);
                 i.putExtras(gameInfo);
@@ -112,6 +116,7 @@ public class BoardView extends View{
                 gameInfo.putInt("boardSize", gridDimension-1);
                 gameInfo.putInt("score1", scoreValue1);
                 gameInfo.putInt("score2", scoreValue2);
+                gameInfo.putBoolean("AI", AI);
                 Intent i=new Intent();
                 i.setClass(getContext(),Board.class);
                 i.putExtras(gameInfo);
@@ -315,39 +320,72 @@ public class BoardView extends View{
                 //Check whose turn it is and then make sure they aren't trying to put a piece somewhere that a piece already exists
                 if (isBlack && boardState[x - 1][y - 1] == 0) {
                     boardState[x - 1][y - 1] = 1;
-                    isBlack = false;
-                    if(parent != null)
+                    if(parent != null && AI == false)
                         playerName.setText("Player 2");
-
-                } else if (!isBlack && boardState[x - 1][y - 1] == 0) {
+                    if(AI == true) {
+                        playerName.setText("Computer is thinking...");
+                        if (isBlack) {
+                            if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
+                                    checkSuccessVertical(x - 1, y - 1, 1) ||
+                                    checkSuccessDiagonal1(x - 1, y - 1, 1) ||
+                                    checkSuccessDiagonal2(x - 1, y - 1, 1)) {
+                                scoreValue1++;
+                                score1.setText("" + scoreValue1);
+                                showSimplePopUpBlackWins();
+                            }
+                        }
+                    }
+                    isBlack = false;
+                } else if (!isBlack && boardState[x - 1][y - 1] == 0 && AI == false) {
                     boardState[x - 1][y - 1] = 2;
                     isBlack = true;
                     if(parent != null)
                         playerName.setText("Player 1");
                 }
-                // check adjacent stones in the vertical,horizontal and diagonal direction and pop up message if success
-                if (isBlack) {
-                    if (checkSuccessHorizontal(x - 1, y - 1, 2) ||
-                            checkSuccessVertical(x - 1, y - 1, 2) ||
-                            checkSuccessDiagonal1(x - 1, y - 1, 2) ||
-                            checkSuccessDiagonal2(x - 1, y - 1, 2))
-                    {
-                        scoreValue2++;
-                        score2.setText("" + scoreValue2);
-                        showSimplePopUpWhiteWins();
+
+                if(AI == true)
+                {
+                    position move = findMove(x - 1, y - 1);
+                    boardState[move.getX()][move.getY()] = 2;
+
+                    if(!isBlack) {
+                        if (checkSuccessHorizontal(move.getX(), move.getY(), 2) ||
+                                checkSuccessVertical(move.getX(), move.getY(), 2) ||
+                                checkSuccessDiagonal1(move.getX(), move.getY(), 2) ||
+                                checkSuccessDiagonal2(move.getX(), move.getY(), 2)) {
+                            scoreValue2++;
+                            score2.setText("" + scoreValue2);
+                            showSimplePopUpWhiteWins();
+                        }
                     }
-                } else if (!isBlack) {
-                    if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
-                            checkSuccessVertical(x - 1, y - 1, 1) ||
-                            checkSuccessDiagonal1(x - 1, y - 1, 1) ||
-                            checkSuccessDiagonal2(x - 1, y - 1, 1))
-                    {
-                        scoreValue1++;
-                        score1.setText("" + scoreValue1);
-                        showSimplePopUpBlackWins();
+
+                    isBlack = true;
+
+                    if(parent != null)
+                            playerName.setText("Player 1");
+
+                } else {
+                    // check adjacent stones in the vertical,horizontal and diagonal direction and pop up message if success
+                    if (isBlack) {
+                        if (checkSuccessHorizontal(x - 1, y - 1, 2) ||
+                                checkSuccessVertical(x - 1, y - 1, 2) ||
+                                checkSuccessDiagonal1(x - 1, y - 1, 2) ||
+                                checkSuccessDiagonal2(x - 1, y - 1, 2)) {
+                            scoreValue2++;
+                            score2.setText("" + scoreValue2);
+                            showSimplePopUpWhiteWins();
+                        }
+                    } else if (!isBlack) {
+                        if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
+                                checkSuccessVertical(x - 1, y - 1, 1) ||
+                                checkSuccessDiagonal1(x - 1, y - 1, 1) ||
+                                checkSuccessDiagonal2(x - 1, y - 1, 1)) {
+                            scoreValue1++;
+                            score1.setText("" + scoreValue1);
+                            showSimplePopUpBlackWins();
+                        }
                     }
                 }
-
                 //Redraw the game board screen to reflect new pieces.
                 this.invalidate();
 
@@ -364,7 +402,6 @@ public class BoardView extends View{
     protected void onDraw(Canvas canvas) {
         // Parent draw
         super.onDraw(canvas);
-
         // Background color
             canvas.drawColor(Color.TRANSPARENT);
 
@@ -475,7 +512,6 @@ public class BoardView extends View{
             }
         }
     }
-    //Used to set parent of this view
     public void setParent(Board parent) {
         this.parent = parent;
     }
@@ -483,6 +519,307 @@ public class BoardView extends View{
     public void setScoreValue1(int x) { scoreValue1 = x;}
 
     public void setScoreValue2(int x) { scoreValue2 = x;}
-}
 
+    public void setAI(boolean b) {AI = b;}
+    public position findMove(int x, int y)
+    {
+        position move;
+        //If we can win, do so.
+        for(int currentX = 0; currentX < gridDimension - 1; currentX++)
+        {
+            for(int currentY = 0; currentY < gridDimension - 1; currentY++)
+            {
+                move = findThreat(currentX, currentY, 4, 2);
+
+                if (checkValidity(move))
+                    return move;
+            }
+        }
+        //If we cannot win, find a block to a four in a row;
+        move = findThreat(x, y, 4, 1);
+        if(checkValidity(move))
+            return move;
+
+        //If no four in a row, block a three in a row;
+        move = findThreat(x, y, 3, 1);
+        if(checkValidity(move))
+            return move;
+
+        //If no three in a row, see if we have any three in a rows;
+        for(int currentX = 0; currentX < gridDimension - 1; currentX++)
+        {
+            for(int currentY = 0; currentY < gridDimension - 1; currentY++)
+            {
+                move = findThreat(currentX, currentY, 3, 2);
+                if(checkValidity(move))
+                    return move;
+            }
+        }
+        //If we have no three in a rows, find a two in a row to build on.
+        for(int currentX = 0; currentX < gridDimension - 1; currentX++)
+        {
+            for(int currentY = 0; currentY < gridDimension - 1; currentY++)
+            {
+                move = findThreat(currentX, currentY, 3, 2);
+                if(checkValidity(move))
+                    return move;
+            }
+        }
+
+        //If no two in a rows, block enemy two in a row.
+        move = findThreat(x, y, 2, 1);
+        if(checkValidity(move))
+            return move;
+
+        //Otherwise place a piece next to the piece the opponent just placed.
+        while(true)
+        {
+            move = getRandomPosition(x, y);
+            if(checkValidity(move))
+                return move;
+
+        }
+    }
+
+    public position getRandomPosition(int x, int y)
+    {
+        int tempX;
+        int tempY;
+        Random rand = new Random();
+        rand.setSeed(System.currentTimeMillis());
+        int direction = rand.nextInt(8) + 1;
+        //SE
+        if(direction == 1)
+        {
+            tempX = x + 1;
+            tempY = y - 1;
+            return new position(tempX, tempY);
+        }
+        //Right
+        if(direction == 2)
+        {
+            tempX = x + 1;
+            tempY = y;
+            return new position(tempX, tempY);
+        }
+        //Up
+        if(direction == 3)
+        {
+            tempX = x;
+            tempY = y + 1;
+            return new position(tempX, tempY);
+        }
+        //Left
+        if(direction == 4)
+        {
+            tempX = x - 1;
+            tempY = y;
+            return new position(tempX, tempY);
+        }
+        //Down
+        if(direction == 5)
+        {
+            tempX = x;
+            tempY = y - 1;
+            return new position(tempX, tempY);
+        }
+        //NE
+        if(direction == 6)
+        {
+            tempX = x + 1;
+            tempY = y + 1;
+            return new position(tempX, tempY);
+        }
+        //SW
+        if(direction == 7)
+        {
+            tempX = x - 1;
+            tempY = y - 1;
+            return new position(tempX, tempY);
+        }
+        //NW
+        if(direction == 7)
+        {
+            tempX = x - 1;
+            tempY = y + 1;
+            return new position(tempX, tempY);
+        }
+        return new position(-1, -1);
+    }
+    public position findThreat(int x, int y, int threatSize, int color)
+    {
+        int i = 0;
+        position chosenMove;
+        //Check left horizontal
+        while ((x - i) >= 0 && boardState[x - i][y] == color) {
+            i++;
+            if (i == threatSize)
+            {
+                chosenMove = new position(x-i, y);
+                if(checkValidity(chosenMove))
+                    return chosenMove;
+                else
+                {
+                    chosenMove = new position(x + 1, y);
+                    if(checkValidity(chosenMove))
+                        return chosenMove;
+                }
+            }
+        }
+
+        //Check right horizontal
+        i = 0;
+        while ((x + i < gridDimension-1) && boardState[x + i][y] == color) {
+            i++;
+            if (i == threatSize)
+            {
+                chosenMove = new position(x + i, y);
+                if (checkValidity(chosenMove))
+                    return chosenMove;
+                else {
+                    chosenMove = new position(x - 1, y);
+                    if (checkValidity(chosenMove))
+                        return chosenMove;
+                }
+            }
+        }
+
+        //Check down vertical
+        i = 0;
+        while ((y - i) >= 0 && boardState[x][y-i] == color)
+        {
+            i++;
+            if (i == threatSize)
+            {
+                chosenMove = new position(x, y - i);
+                if (checkValidity(chosenMove))
+                    return chosenMove;
+                else {
+                    chosenMove = new position(x, y + 1);
+                    if (checkValidity(chosenMove))
+                        return chosenMove;
+                }
+            }
+        }
+
+        //Check up vertical
+        i = 0;
+        while ((y+i < gridDimension-1) && boardState[x][y + i] == color)
+        {
+            i++;
+            if (i == threatSize)
+            {
+                chosenMove = new position(x, y + i);
+                if (checkValidity(chosenMove))
+                    return chosenMove;
+                else {
+                    chosenMove = new position(x, y - 1);
+                    if (checkValidity(chosenMove))
+                        return chosenMove;
+                }
+            }
+        }
+
+        //Check SW diagonal
+        i = 0;
+        while ((x - i) >= 0 && (y - i) >= 0 && boardState[x-i][y-i] == color)
+        {
+            i++;
+            if (i == threatSize)
+            {
+                chosenMove = new position(x - i, y - i);
+                if (checkValidity(chosenMove))
+                    return chosenMove;
+                else {
+                    chosenMove = new position(x + 1, y + 1);
+                    if (checkValidity(chosenMove))
+                        return chosenMove;
+                }
+            }
+        }
+
+        //Check NE diagonal
+        while ((x + i) < gridDimension - 1 && (y + i) < gridDimension - 1 && boardState[x+i][y+i] == color)
+        {
+            i++;
+            if (i == threatSize)
+            {
+                chosenMove = new position(x + i, y + i);
+                if (checkValidity(chosenMove))
+                    return chosenMove;
+                else {
+                    chosenMove = new position(x - 1, y - 1);
+                    if (checkValidity(chosenMove))
+                        return chosenMove;
+                }
+            }
+        }
+
+        //Check NW diagonal
+        while ((x - i) >= 0 && (y + i) < gridDimension - 1 && boardState[x-i][y+i] == color) {
+            i++;
+
+            if (i == threatSize)
+            {
+                chosenMove = new position(x - i, y + i);
+                if (checkValidity(chosenMove))
+                    return chosenMove;
+                else {
+                    chosenMove = new position(x + 1, y - 1);
+                    if (checkValidity(chosenMove))
+                        return chosenMove;
+                }
+            }
+        }
+
+        //Check SE diagonal
+        while ((x + i) < gridDimension -1 && (y - i) >= 0 && boardState[x+i][y-i] == color) {
+            i++;
+
+            if (i == threatSize)
+            {
+                chosenMove = new position(x + i, y - i);
+                if (checkValidity(chosenMove))
+                    return chosenMove;
+                else {
+                    chosenMove = new position(x - 1, y + 1);
+                    if (checkValidity(chosenMove))
+                        return chosenMove;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean checkValidity(position positionToCheck)
+    {
+        if(positionToCheck != null)
+        {
+            if (positionToCheck.x >= 0 && positionToCheck.x < gridDimension - 1 && positionToCheck.y >= 0 && positionToCheck.y < gridDimension - 1) {
+                if (boardState[positionToCheck.x][positionToCheck.y] == 0)
+                    return true;
+            }
+        }
+        return false;
+    }
+    //Hold a board position
+    class position
+    {
+        int x;
+        int y;
+        public position(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+        public int getX()
+        {
+            return this.x;
+        }
+        public int getY()
+        {
+            return this.y;
+        }
+    }
+}
 //Found some information on the math used here and the general method of grid drawing using custom views at http://www.csit.parkland.edu/~dbock/Class/csc212/Lecture/AndroidDrawing2D.html

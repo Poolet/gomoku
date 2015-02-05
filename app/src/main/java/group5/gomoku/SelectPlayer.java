@@ -11,6 +11,8 @@ import android.content.Intent;
 
 public class SelectPlayer extends ActionBarActivity implements OnClickListener {
 
+    Intent i;
+    Bundle gameMode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,9 +41,18 @@ public class SelectPlayer extends ActionBarActivity implements OnClickListener {
             case R.id.play_online_button:
                 break;
             case R.id.play_offline_button:
-                startActivity(new Intent(this, SelectBoard.class));
+                i = new Intent(this, SelectBoard.class);
+                gameMode = new Bundle();
+                gameMode.putBoolean("AI", false);
+                i.putExtras(gameMode);
+                startActivity(i);
                 break;
             case R.id.single_player_button:
+                i = new Intent(this, SelectBoard.class);
+                gameMode = new Bundle();
+                gameMode.putBoolean("AI", true);
+                i.putExtras(gameMode);
+                startActivity(i);
                 break;
         }
     }

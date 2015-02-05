@@ -11,6 +11,7 @@ import android.content.Intent;
 
 public class SelectBoard extends ActionBarActivity implements OnClickListener {
 
+    Bundle bundle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,24 +37,28 @@ public class SelectBoard extends ActionBarActivity implements OnClickListener {
 
     public void onClick(View v) {
         Intent i;
-        Bundle boardSize = new Bundle();
+        bundle = getIntent().getExtras();
+        Bundle gameSettings = new Bundle();
         switch (v.getId()) {
             case R.id.size_10_button:
                 i = new Intent(this, Board.class);
-                boardSize.putInt("boardSize", 10);
-                i.putExtras(boardSize);
+                gameSettings.putInt("boardSize", 10);
+                gameSettings.putBoolean("AI", bundle.getBoolean("AI"));
+                i.putExtras(gameSettings);
                 startActivity(i);
                 break;
             case R.id.size_15_button:
                 i = new Intent(this, Board.class);
-                boardSize.putInt("boardSize", 15);
-                i.putExtras(boardSize);
+                gameSettings.putInt("boardSize", 15);
+                gameSettings.putBoolean("AI", bundle.getBoolean("AI"));
+                i.putExtras(gameSettings);
                 startActivity(i);
                 break;
             case R.id.size_20_button:
                 i = new Intent(this, Board.class);
-                boardSize.putInt("boardSize", 20);
-                i.putExtras(boardSize);
+                gameSettings.putInt("boardSize", 20);
+                gameSettings.putBoolean("AI", bundle.getBoolean("AI"));
+                i.putExtras(gameSettings);
                 startActivity(i);
                 break;
         }
