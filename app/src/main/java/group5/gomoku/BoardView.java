@@ -26,6 +26,9 @@ public class BoardView extends View{
     //Score variables;
     private int scoreValue1;
     private int scoreValue2;
+    //strings for passing scores
+    private String strScoreValue1;
+    private String strScoreValue2;
     //parent holds the containing board activity
     private Board parent;
     //playerName will hold the text view that contains the current player.
@@ -90,6 +93,10 @@ public class BoardView extends View{
 
                 Intent i=new Intent();
                 i.setClass(getContext(),Scores.class);
+                strScoreValue1=String.valueOf(scoreValue1);
+                strScoreValue2=String.valueOf(scoreValue2);
+                i.putExtra("score1",strScoreValue1);
+                i.putExtra("score2",strScoreValue2);
                 getContext().startActivity(i);
             }
         });
@@ -130,6 +137,8 @@ public class BoardView extends View{
             public void onClick(DialogInterface dialog, int which) {
                 Intent i=new Intent();
                 i.setClass(getContext(),Scores.class);
+                i.putExtra("score1",scoreValue1);
+                i.putExtra("score2",scoreValue2);
                 getContext().startActivity(i);
             }
 
