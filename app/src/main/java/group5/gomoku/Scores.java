@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 /**
@@ -29,6 +30,11 @@ public class Scores extends ActionBarActivity implements View.OnClickListener {
         Scores1TextView.setText(""+sc1);
         Scores2TextView.setText(""+sc2);
 
+        View btnPlayAgn = (Button) findViewById(R.id.button_playAgain);
+        btnPlayAgn.setOnClickListener(this);
+        View btnHome = (Button) findViewById(R.id.button_home);
+        btnHome.setOnClickListener(this);
+
 
     }
 
@@ -36,7 +42,7 @@ public class Scores extends ActionBarActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_playAgain:
-                startActivity(new Intent(this,Board.class));
+                startActivity(new Intent(this,SelectBoard.class));
                 break;
             case R.id.button_home:
                 startActivity(new Intent(this, HomeMenu.class));
