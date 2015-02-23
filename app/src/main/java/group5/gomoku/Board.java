@@ -25,7 +25,8 @@ public class Board extends Activity implements View.OnClickListener{
         int boardSize = bundle.getInt("boardSize");
         boolean AI = bundle.getBoolean("AI");
         grid = (BoardView)findViewById(R.id.board_grid);
-        grid.setParent(this);
+        Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
+        grid.setParent(this, chronometer);
         try {
             score1 = bundle.getInt("score1");
             score2 = bundle.getInt("score2");

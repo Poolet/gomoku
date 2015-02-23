@@ -8,9 +8,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Chronometer;
 import android.widget.TextView;
 
 import java.util.Random;
@@ -47,6 +49,7 @@ public class BoardView extends View{
     private Paint gridPaint;
     private Paint blackPiece;
     private Paint whitePiece;
+    private Chronometer chronometer;
 
     public BoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -66,7 +69,7 @@ public class BoardView extends View{
     //Show pop up message when player 1 wins
     private void showSimplePopUpBlackWins() {
 
-
+        chronometer.stop();
         AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this.getContext());
         helpBuilder.setCancelable(false);
         helpBuilder.setTitle("     Game Over");
@@ -111,7 +114,7 @@ public class BoardView extends View{
     //Show pop up message when player 2 wins
     private void showSimplePopUpWhiteWins() {
 
-
+        chronometer.stop();
         AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this.getContext());
         helpBuilder.setCancelable(false);
         helpBuilder.setTitle("     Game Over");
@@ -323,6 +326,11 @@ public class BoardView extends View{
         switch (event.getAction()) {
             //If the user clicked somewhere...
             case MotionEvent.ACTION_DOWN:
+                if(chronometer.isActivated()) {
+                    chronometer.stop();
+                }
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                chronometer.start();
             //Check that we are not on the very edges of the game board
             if(x >= 1 && y >= 1 && x<=gridDimension - 1 && y <= gridDimension - 1)
             {
@@ -521,8 +529,11 @@ public class BoardView extends View{
             }
         }
     }
-    public void setParent(Board parent) {
+    public void setParent(Board parent, Chronometer chronometer) {
         this.parent = parent;
+        this.chronometer = chronometer;
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
     }
 
     public void setScoreValue1(int x) { scoreValue1 = x;}
