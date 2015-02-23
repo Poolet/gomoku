@@ -39,6 +39,8 @@ public class BoardView extends View{
     private boolean isBlack = true;
     //gridDimension will hold information about the size of the board
     private int gridDimension;
+    //count variable for checking the state when no player can win the game
+    private int num_empty_spaces;
     //circleSize holds information about the size of the pieces.
     private float circleSize;
     //Store 0 for empty square, 1 for black, 2 for white
@@ -50,6 +52,7 @@ public class BoardView extends View{
     private Paint blackPiece;
     private Paint whitePiece;
     private Chronometer chronometer;
+
 
     public BoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -119,6 +122,49 @@ public class BoardView extends View{
         helpBuilder.setCancelable(false);
         helpBuilder.setTitle("     Game Over");
         helpBuilder.setMessage("      Player 2 Wins");
+        helpBuilder.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                Bundle gameInfo = new Bundle();
+                gameInfo.putInt("boardSize", gridDimension-1);
+                gameInfo.putInt("score1", scoreValue1);
+                gameInfo.putInt("score2", scoreValue2);
+                gameInfo.putBoolean("AI", AI);
+                Intent i=new Intent();
+                i.setClass(getContext(),Board.class);
+                i.putExtras(gameInfo);
+                getContext().startActivity(i);
+            }
+
+        });
+        helpBuilder.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i=new Intent();
+                i.setClass(getContext(),Scores.class);
+                i.putExtra("score1",scoreValue1);
+                i.putExtra("score2",scoreValue2);
+                getContext().startActivity(i);
+            }
+
+
+        });
+
+        // Remember, create doesn't show the dialog
+        AlertDialog helpDialog = helpBuilder.create();
+        helpDialog.show();
+
+    }
+
+    //Show pop up message when board is full
+    private void showSimplePopUpGameTie() {
+
+
+        AlertDialog.Builder helpBuilder = new AlertDialog.Builder(this.getContext());
+        helpBuilder.setCancelable(false);
+        helpBuilder.setTitle("     Game Over");
+        helpBuilder.setMessage("      Game Tie");
         helpBuilder.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
@@ -319,6 +365,7 @@ public class BoardView extends View{
 
 
     public boolean onTouchEvent(MotionEvent event) {
+
         int ratioX = getWidth()/(gridDimension);
         int ratioY = getHeight()/(gridDimension);
         int x = Math.round(event.getX()/ratioX);
@@ -335,13 +382,66 @@ public class BoardView extends View{
             if(x >= 1 && y >= 1 && x<=gridDimension - 1 && y <= gridDimension - 1)
             {
                 //Check whose turn it is and then make sure they aren't trying to put a piece somewhere that a piece already exists
-                if (isBlack && boardState[x - 1][y - 1] == 0) {
-                    boardState[x - 1][y - 1] = 1;
-                    if(parent != null && AI == false)
-                        playerName.setText("Player 2");
-                    if(AI == true) {
-                        playerName.setText("Computer is thinking...");
+                if(boardState[x - 1][y - 1] == 0) {
+                    num_empty_spaces= num_empty_spaces-1;
+
+                    if (isBlack) {
+                        boardState[x - 1][y - 1] = 1;
+                        if (parent != null && AI == false)
+                            playerName.setText("Player 2");
+                        if (AI == true) {
+                            playerName.setText("Computer is thinking...");
+                            if (isBlack) {
+                                if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
+                                        checkSuccessVertical(x - 1, y - 1, 1) ||
+                                        checkSuccessDiagonal1(x - 1, y - 1, 1) ||
+                                        checkSuccessDiagonal2(x - 1, y - 1, 1)) {
+                                    scoreValue1++;
+                                    score1.setText("" + scoreValue1);
+                                    showSimplePopUpBlackWins();
+                                }
+                            }
+                        }
+                        isBlack = false;
+                    } else if (!isBlack && boardState[x - 1][y - 1] == 0 && AI == false) {
+                        boardState[x - 1][y - 1] = 2;
+                        isBlack = true;
+                        if (parent != null)
+                            playerName.setText("Player 1");
+                    }
+
+                    if (AI == true) {
+                        position move = findMove(x - 1, y - 1);
+                        boardState[move.getX()][move.getY()] = 2;
+
+                        if (!isBlack) {
+                            if (checkSuccessHorizontal(move.getX(), move.getY(), 2) ||
+                                    checkSuccessVertical(move.getX(), move.getY(), 2) ||
+                                    checkSuccessDiagonal1(move.getX(), move.getY(), 2) ||
+                                    checkSuccessDiagonal2(move.getX(), move.getY(), 2)) {
+                                scoreValue2++;
+                                score2.setText("" + scoreValue2);
+                                showSimplePopUpWhiteWins();
+                            }
+                        }
+
+                        isBlack = true;
+
+                        if (parent != null)
+                            playerName.setText("Player 1");
+
+                    } else {
+                        // check adjacent stones in the vertical,horizontal and diagonal direction and pop up message if success
                         if (isBlack) {
+                            if (checkSuccessHorizontal(x - 1, y - 1, 2) ||
+                                    checkSuccessVertical(x - 1, y - 1, 2) ||
+                                    checkSuccessDiagonal1(x - 1, y - 1, 2) ||
+                                    checkSuccessDiagonal2(x - 1, y - 1, 2)) {
+                                scoreValue2++;
+                                score2.setText("" + scoreValue2);
+                                showSimplePopUpWhiteWins();
+                            }
+                        } else if (!isBlack) {
                             if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
                                     checkSuccessVertical(x - 1, y - 1, 1) ||
                                     checkSuccessDiagonal1(x - 1, y - 1, 1) ||
@@ -351,58 +451,15 @@ public class BoardView extends View{
                                 showSimplePopUpBlackWins();
                             }
                         }
+
                     }
-                    isBlack = false;
-                } else if (!isBlack && boardState[x - 1][y - 1] == 0 && AI == false) {
-                    boardState[x - 1][y - 1] = 2;
-                    isBlack = true;
-                    if(parent != null)
-                        playerName.setText("Player 1");
+                    //check if board is full
+                    if (num_empty_spaces==0)
+                        showSimplePopUpGameTie();
+
                 }
 
-                if(AI == true)
-                {
-                    position move = findMove(x - 1, y - 1);
-                    boardState[move.getX()][move.getY()] = 2;
 
-                    if(!isBlack) {
-                        if (checkSuccessHorizontal(move.getX(), move.getY(), 2) ||
-                                checkSuccessVertical(move.getX(), move.getY(), 2) ||
-                                checkSuccessDiagonal1(move.getX(), move.getY(), 2) ||
-                                checkSuccessDiagonal2(move.getX(), move.getY(), 2)) {
-                            scoreValue2++;
-                            score2.setText("" + scoreValue2);
-                            showSimplePopUpWhiteWins();
-                        }
-                    }
-
-                    isBlack = true;
-
-                    if(parent != null)
-                            playerName.setText("Player 1");
-
-                } else {
-                    // check adjacent stones in the vertical,horizontal and diagonal direction and pop up message if success
-                    if (isBlack) {
-                        if (checkSuccessHorizontal(x - 1, y - 1, 2) ||
-                                checkSuccessVertical(x - 1, y - 1, 2) ||
-                                checkSuccessDiagonal1(x - 1, y - 1, 2) ||
-                                checkSuccessDiagonal2(x - 1, y - 1, 2)) {
-                            scoreValue2++;
-                            score2.setText("" + scoreValue2);
-                            showSimplePopUpWhiteWins();
-                        }
-                    } else if (!isBlack) {
-                        if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
-                                checkSuccessVertical(x - 1, y - 1, 1) ||
-                                checkSuccessDiagonal1(x - 1, y - 1, 1) ||
-                                checkSuccessDiagonal2(x - 1, y - 1, 1)) {
-                            scoreValue1++;
-                            score1.setText("" + scoreValue1);
-                            showSimplePopUpBlackWins();
-                        }
-                    }
-                }
                 //Redraw the game board screen to reflect new pieces.
                 this.invalidate();
 
@@ -457,6 +514,7 @@ public class BoardView extends View{
         return gridDimension;
     }
 
+
     public void setGridDimension(int gridDimension) {
         this.gridDimension = gridDimension;
     }
@@ -473,6 +531,8 @@ public class BoardView extends View{
         }
         // Set initial grid dimension
         boardState = new int[gridDimension][gridDimension];
+        num_empty_spaces=(gridDimension*gridDimension);
+
         if(gridDimension < 15)
         {
             circleSize = (float)0.04;
@@ -489,6 +549,8 @@ public class BoardView extends View{
 
         //Add 1 to grid dimension so that when we draw, we have the right number of intersections
         setGridDimension(getGridDimension() + 1);
+
+
         // Grid line paint
         gridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         gridPaint.setStyle(Paint.Style.STROKE);
