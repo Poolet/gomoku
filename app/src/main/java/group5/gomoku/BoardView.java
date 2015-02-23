@@ -327,13 +327,64 @@ public class BoardView extends View{
             if(x >= 1 && y >= 1 && x<=gridDimension - 1 && y <= gridDimension - 1)
             {
                 //Check whose turn it is and then make sure they aren't trying to put a piece somewhere that a piece already exists
-                if (isBlack && boardState[x - 1][y - 1] == 0) {
-                    boardState[x - 1][y - 1] = 1;
-                    if(parent != null && AI == false)
-                        playerName.setText("Player 2");
-                    if(AI == true) {
-                        playerName.setText("Computer is thinking...");
+                if(boardState[x - 1][y - 1] == 0) {
+                    if (isBlack) {
+                        boardState[x - 1][y - 1] = 1;
+                        if (parent != null && AI == false)
+                            playerName.setText("Player 2");
+                        if (AI == true) {
+                            playerName.setText("Computer is thinking...");
+                            if (isBlack) {
+                                if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
+                                        checkSuccessVertical(x - 1, y - 1, 1) ||
+                                        checkSuccessDiagonal1(x - 1, y - 1, 1) ||
+                                        checkSuccessDiagonal2(x - 1, y - 1, 1)) {
+                                    scoreValue1++;
+                                    score1.setText("" + scoreValue1);
+                                    showSimplePopUpBlackWins();
+                                }
+                            }
+                        }
+                        isBlack = false;
+                    } else if (!isBlack && boardState[x - 1][y - 1] == 0 && AI == false) {
+                        boardState[x - 1][y - 1] = 2;
+                        isBlack = true;
+                        if (parent != null)
+                            playerName.setText("Player 1");
+                    }
+
+                    if (AI == true) {
+                        position move = findMove(x - 1, y - 1);
+                        boardState[move.getX()][move.getY()] = 2;
+
+                        if (!isBlack) {
+                            if (checkSuccessHorizontal(move.getX(), move.getY(), 2) ||
+                                    checkSuccessVertical(move.getX(), move.getY(), 2) ||
+                                    checkSuccessDiagonal1(move.getX(), move.getY(), 2) ||
+                                    checkSuccessDiagonal2(move.getX(), move.getY(), 2)) {
+                                scoreValue2++;
+                                score2.setText("" + scoreValue2);
+                                showSimplePopUpWhiteWins();
+                            }
+                        }
+
+                        isBlack = true;
+
+                        if (parent != null)
+                            playerName.setText("Player 1");
+
+                    } else {
+                        // check adjacent stones in the vertical,horizontal and diagonal direction and pop up message if success
                         if (isBlack) {
+                            if (checkSuccessHorizontal(x - 1, y - 1, 2) ||
+                                    checkSuccessVertical(x - 1, y - 1, 2) ||
+                                    checkSuccessDiagonal1(x - 1, y - 1, 2) ||
+                                    checkSuccessDiagonal2(x - 1, y - 1, 2)) {
+                                scoreValue2++;
+                                score2.setText("" + scoreValue2);
+                                showSimplePopUpWhiteWins();
+                            }
+                        } else if (!isBlack) {
                             if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
                                     checkSuccessVertical(x - 1, y - 1, 1) ||
                                     checkSuccessDiagonal1(x - 1, y - 1, 1) ||
@@ -342,56 +393,6 @@ public class BoardView extends View{
                                 score1.setText("" + scoreValue1);
                                 showSimplePopUpBlackWins();
                             }
-                        }
-                    }
-                    isBlack = false;
-                } else if (!isBlack && boardState[x - 1][y - 1] == 0 && AI == false) {
-                    boardState[x - 1][y - 1] = 2;
-                    isBlack = true;
-                    if(parent != null)
-                        playerName.setText("Player 1");
-                }
-
-                if(AI == true)
-                {
-                    position move = findMove(x - 1, y - 1);
-                    boardState[move.getX()][move.getY()] = 2;
-
-                    if(!isBlack) {
-                        if (checkSuccessHorizontal(move.getX(), move.getY(), 2) ||
-                                checkSuccessVertical(move.getX(), move.getY(), 2) ||
-                                checkSuccessDiagonal1(move.getX(), move.getY(), 2) ||
-                                checkSuccessDiagonal2(move.getX(), move.getY(), 2)) {
-                            scoreValue2++;
-                            score2.setText("" + scoreValue2);
-                            showSimplePopUpWhiteWins();
-                        }
-                    }
-
-                    isBlack = true;
-
-                    if(parent != null)
-                            playerName.setText("Player 1");
-
-                } else {
-                    // check adjacent stones in the vertical,horizontal and diagonal direction and pop up message if success
-                    if (isBlack) {
-                        if (checkSuccessHorizontal(x - 1, y - 1, 2) ||
-                                checkSuccessVertical(x - 1, y - 1, 2) ||
-                                checkSuccessDiagonal1(x - 1, y - 1, 2) ||
-                                checkSuccessDiagonal2(x - 1, y - 1, 2)) {
-                            scoreValue2++;
-                            score2.setText("" + scoreValue2);
-                            showSimplePopUpWhiteWins();
-                        }
-                    } else if (!isBlack) {
-                        if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
-                                checkSuccessVertical(x - 1, y - 1, 1) ||
-                                checkSuccessDiagonal1(x - 1, y - 1, 1) ||
-                                checkSuccessDiagonal2(x - 1, y - 1, 1)) {
-                            scoreValue1++;
-                            score1.setText("" + scoreValue1);
-                            showSimplePopUpBlackWins();
                         }
                     }
                 }
