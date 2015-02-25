@@ -22,6 +22,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
@@ -34,7 +35,7 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
     View hostGame ;
     View joinGame ;
     View sendData ;
-    int mode = 0;
+    int mode = 1;
     BluetoothSocket writerCSocket;
     BluetoothSocket writerSSocket;
     ListView LVlistView;
@@ -46,6 +47,7 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
     private static final int MESSAGE_READ=1;
     Set<BluetoothDevice> pairedDevices;
     ArrayAdapter<String> listAdapter;
+    ArrayList list = new ArrayList();
     Handler mHandler = new Handler(){
         public void handleMessage(Message msg) {
             // TODO Auto-generated method stub
@@ -76,6 +78,7 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
         hostGame = (Button) findViewById(R.id.button);
         joinGame = (Button) findViewById(R.id.button2);
         sendData = (Button) findViewById(R.id.button3);
+        LVlistView = (ListView) findViewById(R.id.listView2);
         getDevices.setOnClickListener(this);
         hostGame.setOnClickListener(this);
         joinGame.setOnClickListener(this);
@@ -153,17 +156,16 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
             case R.id.button4:
 
                 // setupChat();
-               // pairedDevices = BA.getBondedDevices();
-               // if (pairedDevices.size() > 0) {
-                //    for (BluetoothDevice bt : pairedDevices) {
-                     //   if (bt.getName().equals("Galaxy")) {
-                    //        ConnectThread connectThread = new ConnectThread(bt);
-                     //       connectThread.start();
-                       // }
-                        //listAdapter.add(bt.getName());
-                 //   }
-              // }
-               // LVlistView.setAdapter(listAdapter);
+                pairedDevices = BA.getBondedDevices();
+                    for (BluetoothDevice bt : pairedDevices) {
+                        //if (bt.getName().equals("Galaxy")) {
+                          //  ConnectThread connectThread = new ConnectThread(bt);
+                           // connectThread.start();
+                        //}
+                        listAdapter.add(bt.getName());
+                   }
+
+                LVlistView.setAdapter(listAdapter);
              //   startDiscovery();
                 break;
             case R.id.button:
@@ -174,7 +176,7 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
                 break;
             case R.id.button2:
                 for (BluetoothDevice bt : pairedDevices) {
-                    if (bt.getName().equals("Galaxy")) {
+                    if (bt.getName().equals("XT1064")) {
                         ConnectThread connectThread = new ConnectThread(bt);
                         connectThread.start();
                     }
@@ -188,7 +190,8 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
                     String s1 = "successfully connected Server onClick";
                     con.write(s1.getBytes());
                 }
-                else {
+                else
+                {
                     ConnectedThread con = new ConnectedThread(writerCSocket);
                     String s2 = "successfully connected Client onClick";
                     con.write(s2.getBytes());
