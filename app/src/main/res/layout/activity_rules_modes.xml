@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="GOMOKU+"
+        android:text="Game Modes"
         android:id="@+id/textView7"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Gomoku+ is a two-player, board game. \n\nEach player has a type of stone, black or white. \n\nIn each turn, each player places a stone at a corner in the board. \n\nThe winner must have a line of five adjacent stones arranged vertically, horizontally, or diagonally. \n\nThis line must not be blocked at both ends. \n\nA line of six of more adjacent stones does not count."
+        android:text="Gomoku+ has three different game modes.\n\n 1. Multiplayer Offline: Players take turns placing pieces on the same mobile device. \n\n 2. Single Player: Play against a simulated opponent \n\n 3. Multiplayer Online: Play against another opponent by connecting with them using bluetooth."
         android:id="@+id/textView8"
         android:layout_below="@+id/textView7"
         android:layout_alignParentLeft="true"
@@ -26,7 +26,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_above="@+id/btnOK"
-        android:textSize="18dp"
+        android:textSize="20dp"
         android:textStyle="bold" />
 
     <Button
@@ -35,22 +35,21 @@
         android:text="Home"
         android:id="@+id/btnOK"
         android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/textView7"
-        android:layout_alignEnd="@+id/textView7"
-        android:layout_toLeftOf="@+id/textView7"
         android:layout_alignLeft="@+id/textView7"
-        android:layout_alignStart="@+id/textView7" />
+        android:layout_alignStart="@+id/textView7"
+        android:layout_alignRight="@+id/textView7"
+        android:layout_alignEnd="@+id/textView7" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Next"
-        android:id="@+id/next1"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/textView8"
-        android:layout_alignEnd="@+id/textView8"
-        android:layout_toRightOf="@+id/textView7"
-        android:layout_toEndOf="@+id/textView7" />
+        android:text="Previous"
+        android:id="@+id/gameModePrevious"
+        android:layout_alignTop="@+id/btnOK"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/textView7"
+        android:layout_toLeftOf="@+id/textView7" />
 
 </RelativeLayout>

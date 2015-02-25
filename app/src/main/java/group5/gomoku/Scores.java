@@ -17,18 +17,18 @@ public class Scores extends ActionBarActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        Bundle bundle = this.getIntent().getExtras();
         setContentView(R.layout.activity_scores);
         Scores1TextView = (TextView)findViewById(R.id.editText);
         Scores2TextView = (TextView)findViewById(R.id.editText2);
-        String sc1="",sc2="";
-        Intent extras = getIntent();
+        String sc1,sc2;
 
-            sc1 = extras.getStringExtra("score1");
-            sc2 = extras.getStringExtra("score2");
+        sc1 = "" + bundle.getInt("score1");
+        sc2 = "" + bundle.getInt("score2");
 
 
-        Scores1TextView.setText(""+sc1);
-        Scores2TextView.setText(""+sc2);
+        Scores1TextView.setText(sc1);
+        Scores2TextView.setText(sc2);
 
         View btnPlayAgn = (Button) findViewById(R.id.button_playAgain);
         btnPlayAgn.setOnClickListener(this);
@@ -40,9 +40,15 @@ public class Scores extends ActionBarActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        Bundle bundle = this.getIntent().getExtras();
         switch (v.getId()) {
             case R.id.button_playAgain:
-                startActivity(new Intent(this,SelectBoard.class));
+                Bundle gameInfo = new Bundle();
+                gameInfo.putBoolean("AI", bundle.getBoolean("AI"));
+                Intent i=new Intent();
+                i.putExtras(gameInfo);
+                i.setClass(this, SelectBoard.class);
+                startActivity(i);
                 break;
             case R.id.button_home:
                 startActivity(new Intent(this, HomeMenu.class));

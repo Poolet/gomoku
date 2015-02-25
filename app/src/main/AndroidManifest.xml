@@ -52,6 +52,11 @@
             android:label="@string/title_activity_rules"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".RulesMode"
+            android:label="@string/title_activity_rules"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

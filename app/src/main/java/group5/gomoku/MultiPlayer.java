@@ -1,6 +1,5 @@
 package group5.gomoku;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -134,7 +133,6 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
         } else {
             Toast.makeText(getApplicationContext(), "Already on",
                     Toast.LENGTH_LONG).show();
-
         }
 
         pairedDevices = BA.getBondedDevices();

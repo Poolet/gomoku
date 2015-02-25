@@ -85,9 +85,11 @@ public class BoardView extends View{
                 gameInfo.putInt("score1", scoreValue1);
                 gameInfo.putInt("score2", scoreValue2);
                 gameInfo.putBoolean("AI", AI);
+
                 Intent i=new Intent();
                 i.setClass(getContext(),Board.class);
                 i.putExtras(gameInfo);
+
                 getContext().startActivity(i);
             }
 
@@ -96,13 +98,16 @@ public class BoardView extends View{
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                Bundle gameInfo = new Bundle();
+                gameInfo.putInt("boardSize", gridDimension-1);
+                gameInfo.putInt("score1", scoreValue1);
+                gameInfo.putInt("score2", scoreValue2);
+                gameInfo.putBoolean("AI", AI);
 
                 Intent i=new Intent();
                 i.setClass(getContext(),Scores.class);
-                strScoreValue1=String.valueOf(scoreValue1);
-                strScoreValue2=String.valueOf(scoreValue2);
-                i.putExtra("score1",strScoreValue1);
-                i.putExtra("score2",strScoreValue2);
+                i.putExtras(gameInfo);
+
                 getContext().startActivity(i);
             }
         });
@@ -142,9 +147,13 @@ public class BoardView extends View{
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent i=new Intent();
+                Bundle gameInfo = new Bundle();
                 i.setClass(getContext(),Scores.class);
-                i.putExtra("score1",scoreValue1);
-                i.putExtra("score2",scoreValue2);
+                gameInfo.putInt("boardSize", gridDimension-1);
+                gameInfo.putInt("score1", scoreValue1);
+                gameInfo.putInt("score2", scoreValue2);
+                gameInfo.putBoolean("AI", AI);
+                i.putExtras(gameInfo);
                 getContext().startActivity(i);
             }
 
@@ -884,6 +893,20 @@ public class BoardView extends View{
         }
         return false;
     }
+
+    public boolean getAI()
+    {
+        return AI;
+    }
+
+    public int getScoreValue1(){
+        return scoreValue1;
+    }
+
+    public int getScoreValue2(){
+        return scoreValue2;
+    }
+
     //Hold a board position
     class position
     {

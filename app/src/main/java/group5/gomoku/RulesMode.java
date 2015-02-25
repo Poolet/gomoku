@@ -1,37 +1,28 @@
 package group5.gomoku;
 
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+/**
+ * Created by typut_000 on 2/24/2015.
+ */
+public class RulesMode extends ActionBarActivity implements View.OnClickListener  {
 
-public class rules extends ActionBarActivity implements View.OnClickListener {
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rules);
+        setContentView(R.layout.activity_rules_modes);
 
         View btnOk = (Button) findViewById(R.id.btnOK);
         btnOk.setOnClickListener(this);
 
-        View btnNext = (Button) findViewById(R.id.next1);
-        btnNext.setOnClickListener(this);
+        View btnPrev = (Button) findViewById(R.id.gameModePrevious);
+        btnPrev.setOnClickListener(this);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_rules, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -45,16 +36,14 @@ public class rules extends ActionBarActivity implements View.OnClickListener {
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnOK:
                 startActivity(new Intent(this, HomeMenu.class));
                 break;
 
-            case R.id.next1:
-                startActivity(new Intent(this, RulesMode.class));
+            case R.id.gameModePrevious:
+                startActivity(new Intent(this, rules.class));
                 break;
         }
     }
