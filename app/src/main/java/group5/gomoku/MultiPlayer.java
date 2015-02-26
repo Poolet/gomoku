@@ -210,7 +210,12 @@ private void forClient(BluetoothSocket ClientSocket)
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(bReceiver);
+        try {
+            unregisterReceiver(bReceiver);
+        } catch(IllegalArgumentException e)
+        {
+
+        }
     }
     public void turnOn()
     {
