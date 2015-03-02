@@ -6,8 +6,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:background="@drawable/menu_background"
-    >
+    android:id="@+id/mainLayout">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@drawable/menu_background"
+        android:id="@+id/relLayout">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,3 +59,111 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/menu_background"
+        android:id="@+id/rLayoutBoard"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/playerName"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:text="(Player name goes here)"
+            android:gravity="center_horizontal" />
+
+        <group5.gomoku.BoardView
+            android:id="@+id/board_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/button_scores"
+            android:layout_above="@+id/button_quit"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignRight="@+id/button_back"
+            android:layout_alignEnd="@+id/button_back"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp" />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quit"
+            android:id="@+id/button_quit"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:id="@+id/button_back"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scores"
+            android:id="@+id/button_scores"
+            android:layout_below="@+id/playerName"
+            android:layout_toLeftOf="@+id/button_back"
+            android:layout_toRightOf="@+id/button_quit"
+            android:layout_toEndOf="@+id/button_quit" />
+        //android:layout_above="@+id/gridview"
+
+        <Chronometer
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/chronometer"
+            android:layout_alignParentBottom="true"
+            android:layout_alignTop="@+id/button_quit"
+            android:layout_toRightOf="@+id/button_quit"
+            android:layout_alignRight="@+id/button_scores"
+            android:layout_alignEnd="@+id/button_scores"
+            android:gravity="center_vertical|bottom|center_horizontal"
+            android:textSize="40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/score2"
+            android:textAlignment="center"
+            android:text="0"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_above="@+id/board_grid"
+            android:layout_alignRight="@+id/button_back"
+            android:layout_alignEnd="@+id/button_back"
+            android:layout_alignLeft="@+id/button_back"
+            android:layout_alignStart="@+id/button_back"
+            android:layout_alignTop="@+id/button_scores"
+            android:textSize="40dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/score1"
+            android:textAlignment="center"
+            android:text="0"
+            android:gravity="center_vertical|center_horizontal"
+            android:textSize="40dp"
+            android:layout_alignTop="@+id/button_scores"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_toLeftOf="@+id/button_scores"
+            android:layout_toStartOf="@+id/button_scores" />
+</RelativeLayout>
+    </RelativeLayout>

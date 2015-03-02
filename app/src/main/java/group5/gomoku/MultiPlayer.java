@@ -11,12 +11,13 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,13 +31,17 @@ import java.util.UUID;
 /**
  * Created by Maithily on 2/22/2015.
  */
-public class MultiPlayer extends ActionBarActivity implements View.OnClickListener {
+public class MultiPlayer extends Board implements View.OnClickListener {
     private static final int CONNECTION_SUCCESS = 0;
+    BoardView grid;
     View getDevices ;
     View hostGame ;
     View joinGame ;
     View sendData ;
     int mode = 1;
+    private static final int CLIENT_READY=2;
+    RelativeLayout rLayoutBoard;
+    RelativeLayout rLayout;
     BluetoothSocket writerCSocket;
     BluetoothSocket writerSSocket;
     ListView LVlistView;
@@ -57,15 +62,46 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
             switch(msg.what){
                 case CONNECTION_SUCCESS:
                     // DO something
-                    ConnectedThread connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
+                    //ConnectedThread connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
                     Toast.makeText(getApplicationContext(), "CONNECT", Toast.LENGTH_SHORT).show();
-
+                    MultiPlayer.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            rLayoutBoard.setVisibility(View.VISIBLE);
+                            rLayout.setVisibility(View.INVISIBLE);
+                            grid = (BoardView)findViewById(R.id.board_grid);
+                            Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
+                            grid.setParent(MultiPlayer.this, chronometer);
+                            grid.setGridDimension(10);
+                            grid.setOnline(true);
+                            grid.Init();
+                            grid.invalidate();
+                            //draw board for client here
+                        }
+                    });
 
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[])msg.obj;
                     String string = new String(readBuf);
                     Toast.makeText(getApplicationContext(), string,Toast.LENGTH_SHORT ).show();
+                    break;
+
+                case CLIENT_READY:
+                    MultiPlayer.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "In client ready",Toast.LENGTH_SHORT ).show();
+                            rLayoutBoard.setVisibility(View.VISIBLE);
+                            rLayout.setVisibility(View.INVISIBLE);
+                            //draw board for server here
+                            grid = (BoardView)findViewById(R.id.board_grid);
+                            Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
+                            grid.setParent(MultiPlayer.this, chronometer);
+                            grid.setGridDimension(10);
+                            grid.setOnline(true);
+                            grid.Init();
+                            grid.invalidate();
+                        }
+                    });
                     break;
             }
         }
@@ -79,10 +115,14 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
         joinGame = (Button) findViewById(R.id.button2);
         sendData = (Button) findViewById(R.id.button3);
         LVlistView = (ListView) findViewById(R.id.listView2);
+        rLayout = (RelativeLayout) findViewById(R.id.relLayout);
+        rLayoutBoard = (RelativeLayout) findViewById(R.id.rLayoutBoard);
         hostGame.setOnClickListener(this);
         joinGame.setOnClickListener(this);
         sendData.setOnClickListener(this);
         iFilter= new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        rLayout.setVisibility(View.VISIBLE);
+        rLayoutBoard.setVisibility(View.INVISIBLE);
         bReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -91,22 +131,6 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
                 if(BluetoothDevice.ACTION_FOUND.equals(action)){
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     listAdapter.add(device.getName()+"\n"+device.getAddress());
-                }
-                else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action))
-                {
-
-                }
-                else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
-                {
-
-                }
-                else if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(action))
-                {
-                    if (BA.getState() == BA.STATE_OFF)
-                    {
-                        turnOn();
-                    }
-
                 }
             }
         };
@@ -149,12 +173,9 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
                 at.start();
                 break;
             case R.id.button2:
+                listAdapter.clear();
                 pairedDevices = BA.getBondedDevices();
                 for (BluetoothDevice bt : pairedDevices) {
-                    //if (bt.getName().equals("Galaxy")) {
-                    //  ConnectThread connectThread = new ConnectThread(bt);
-                    // connectThread.start();
-                    //}
                     listAdapter.add(bt.getName());
                 }
                 LVlistView.setAdapter(listAdapter);
@@ -165,6 +186,8 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
                             if (bt.getName().equals(((TextView) view).getText())) {
                                 ConnectThread connectThread = new ConnectThread(bt);
                                 connectThread.start();
+
+
                             }
                         }
                     }
@@ -187,7 +210,7 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
                 break;
         }
     }
-private void forClient(BluetoothSocket ClientSocket)
+    private void forClient(BluetoothSocket ClientSocket)
     {
         writerCSocket = ClientSocket;
     }
@@ -246,6 +269,7 @@ private void forClient(BluetoothSocket ClientSocket)
                     // Do work to manage the connection (in a separate thread)
                     manageConnectedSocket(socket);
                     forServer(socket);
+                    mHandler.obtainMessage(CLIENT_READY,socket).sendToTarget();
                     try {
                         mmServerSocket.close();
                     } catch (IOException e) {

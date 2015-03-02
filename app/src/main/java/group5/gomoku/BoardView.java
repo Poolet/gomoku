@@ -22,6 +22,8 @@ import java.util.Random;
  */
 public class BoardView extends View{
 
+    //Determine whether we are in multiplayer or not
+    private boolean online;
     //Score text views
     private TextView score1;
     private TextView score2;
@@ -584,6 +586,14 @@ public class BoardView extends View{
                 / (this.getGridDimension()) * width);
     }
 
+    public void setOnline(boolean b)
+    {
+        online=b;
+    }
+    public boolean getOnline(boolean b)
+    {
+        return online;
+    }
     private float interpY(double y) {
         double height = (double) this.getHeight();
         return (float) ((y + this.getGridDimension())
