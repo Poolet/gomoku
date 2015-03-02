@@ -13,9 +13,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -73,12 +75,10 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mutliplayer);
-        getDevices = (Button) findViewById(R.id.button4);
         hostGame = (Button) findViewById(R.id.button);
         joinGame = (Button) findViewById(R.id.button2);
         sendData = (Button) findViewById(R.id.button3);
         LVlistView = (ListView) findViewById(R.id.listView2);
-        getDevices.setOnClickListener(this);
         hostGame.setOnClickListener(this);
         joinGame.setOnClickListener(this);
         sendData.setOnClickListener(this);
@@ -136,36 +136,12 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
         }
 
         pairedDevices = BA.getBondedDevices();
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice bt : pairedDevices) {
-                //   if (bt.getName().equals("Galaxy")) {
-                //        ConnectThread connectThread = new ConnectThread(bt);
-                //       connectThread.start();
-                // }
-                listAdapter.add(bt.getName());
-            }
-        }
 
     }
 
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button4:
-
-                // setupChat();
-                pairedDevices = BA.getBondedDevices();
-                    for (BluetoothDevice bt : pairedDevices) {
-                        //if (bt.getName().equals("Galaxy")) {
-                          //  ConnectThread connectThread = new ConnectThread(bt);
-                           // connectThread.start();
-                        //}
-                        listAdapter.add(bt.getName());
-                   }
-
-                LVlistView.setAdapter(listAdapter);
-             //   startDiscovery();
-                break;
             case R.id.button:
                 mode = 0;
                 AcceptThread at = new AcceptThread();
@@ -173,17 +149,31 @@ public class MultiPlayer extends ActionBarActivity implements View.OnClickListen
                 at.start();
                 break;
             case R.id.button2:
+                pairedDevices = BA.getBondedDevices();
                 for (BluetoothDevice bt : pairedDevices) {
-                    if (bt.getName().equals("XT1064")) {
-                        ConnectThread connectThread = new ConnectThread(bt);
-                        connectThread.start();
-                    }
+                    //if (bt.getName().equals("Galaxy")) {
+                    //  ConnectThread connectThread = new ConnectThread(bt);
+                    // connectThread.start();
+                    //}
+                    listAdapter.add(bt.getName());
                 }
+                LVlistView.setAdapter(listAdapter);
+                LVlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        for(BluetoothDevice bt : pairedDevices) {
+                            if (bt.getName().equals(((TextView) view).getText())) {
+                                ConnectThread connectThread = new ConnectThread(bt);
+                                connectThread.start();
+                            }
+                        }
+                    }
+                });
+
                 break;
             case R.id.button3:
                 if(mode==0)
                 {
-
                     ConnectedThread con =new ConnectedThread(writerSSocket);
                     String s1 = "successfully connected Server onClick";
                     con.write(s1.getBytes());
