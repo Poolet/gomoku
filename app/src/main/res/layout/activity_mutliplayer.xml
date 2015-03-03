@@ -92,6 +92,19 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp" />
 
+        <group5.gomoku.BoardView
+            android:id="@+id/board_grid2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/button_scores"
+            android:layout_above="@+id/button_quit"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignRight="@+id/button_back"
+            android:layout_alignEnd="@+id/button_back"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp" />
+
 
         <Button
             android:layout_width="wrap_content"

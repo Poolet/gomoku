@@ -33,13 +33,16 @@ import java.util.UUID;
  */
 public class MultiPlayer extends Board implements View.OnClickListener {
     private static final int CONNECTION_SUCCESS = 0;
-    BoardView grid;
-    View getDevices ;
-    View hostGame ;
-    View joinGame ;
-    View sendData ;
+    BoardView gridServer;
+    BoardView gridClient;
+    View getDevices;
+    View hostGame;
+    View joinGame;
+    View sendData;
+    Chronometer chronometer;
+    int turn;
     int mode = 1;
-    private static final int CLIENT_READY=2;
+    private static final int CLIENT_READY = 2;
     RelativeLayout rLayoutBoard;
     RelativeLayout rLayout;
     BluetoothSocket writerCSocket;
@@ -49,17 +52,17 @@ public class MultiPlayer extends Board implements View.OnClickListener {
     BroadcastReceiver bReceiver;
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     BluetoothAdapter BA;
-    private static final int SUCCESS_CONNECT=0;
-    private static final int MESSAGE_READ=1;
+    private static final int SUCCESS_CONNECT = 0;
+    private static final int MESSAGE_READ = 1;
     Set<BluetoothDevice> pairedDevices;
     ArrayAdapter<String> listAdapter;
     ArrayList list = new ArrayList();
-    Handler mHandler = new Handler(){
+    Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             // TODO Auto-generated method stub
 
             super.handleMessage(msg);
-            switch(msg.what){
+            switch (msg.what) {
                 case CONNECTION_SUCCESS:
                     // DO something
                     //ConnectedThread connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
@@ -68,38 +71,44 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                         public void run() {
                             rLayoutBoard.setVisibility(View.VISIBLE);
                             rLayout.setVisibility(View.INVISIBLE);
-                            grid = (BoardView)findViewById(R.id.board_grid);
-                            Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
-                            grid.setParent(MultiPlayer.this, chronometer);
-                            grid.setGridDimension(10);
-                            grid.setOnline(true);
-                            grid.Init();
-                            grid.invalidate();
+                            gridServer.setVisibility(View.INVISIBLE);
+
+                            chronometer = (Chronometer) findViewById(R.id.chronometer);
+                            gridClient.setParent(MultiPlayer.this, chronometer);
+                            gridClient.setGridDimension(10);
+                            gridClient.setOnline(true);
+                            gridClient.setTurn(false);
+                            gridClient.Init();
+                            gridClient.invalidate();
+
                             //draw board for client here
                         }
                     });
 
                     break;
                 case MESSAGE_READ:
-                    byte[] readBuf = (byte[])msg.obj;
+                    byte[] readBuf = (byte[]) msg.obj;
                     String string = new String(readBuf);
-                    Toast.makeText(getApplicationContext(), string,Toast.LENGTH_SHORT ).show();
+                    Toast.makeText(getApplicationContext(), "Your turn!", Toast.LENGTH_SHORT).show();
+                    gridClient.setTurn(!gridClient.getTurn());
+                    gridServer.setTurn(!gridServer.getTurn());
                     break;
 
                 case CLIENT_READY:
                     MultiPlayer.this.runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "In client ready",Toast.LENGTH_SHORT ).show();
+                            Toast.makeText(getApplicationContext(), "In client ready", Toast.LENGTH_SHORT).show();
                             rLayoutBoard.setVisibility(View.VISIBLE);
                             rLayout.setVisibility(View.INVISIBLE);
+                            gridClient.setVisibility(View.INVISIBLE);
                             //draw board for server here
-                            grid = (BoardView)findViewById(R.id.board_grid);
-                            Chronometer chronometer = (Chronometer) findViewById(R.id.chronometer);
-                            grid.setParent(MultiPlayer.this, chronometer);
-                            grid.setGridDimension(10);
-                            grid.setOnline(true);
-                            grid.Init();
-                            grid.invalidate();
+                            chronometer = (Chronometer) findViewById(R.id.chronometer);
+                            gridServer.setParent(MultiPlayer.this, chronometer);
+                            gridServer.setGridDimension(10);
+                            gridServer.setOnline(true);
+                            gridServer.setTurn(true);
+                            gridServer.Init();
+                            gridServer.invalidate();
                         }
                     });
                     break;
@@ -107,10 +116,29 @@ public class MultiPlayer extends Board implements View.OnClickListener {
         }
     };
 
+    protected void swapTurns()
+    {
+        if(mode==0)
+        {
+            ConnectedThread con =new ConnectedThread(writerSSocket);
+            String s = "" + gridServer.getTurn();
+            con.write(s.getBytes());
+        }
+        else
+        {
+            ConnectedThread con = new ConnectedThread(writerCSocket);
+            String s2 = "" + gridClient.getTurn();
+            con.write(s2.getBytes());
+        }
+        gridServer.setTurn(!gridServer.getTurn());
+        gridClient.setTurn(!gridClient.getTurn());
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mutliplayer);
+        gridServer = (BoardView)findViewById(R.id.board_grid);
+        gridClient = (BoardView)findViewById(R.id.board_grid2);
         hostGame = (Button) findViewById(R.id.button);
         joinGame = (Button) findViewById(R.id.button2);
         sendData = (Button) findViewById(R.id.button3);
