@@ -16,6 +16,7 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * Created by Tyler on 1/29/2015.
@@ -47,7 +48,7 @@ public class BoardView extends View{
     //circleSize holds information about the size of the pieces.
     private float circleSize;
     //Store 0 for empty square, 1 for black, 2 for white
-    private int[][] boardState;
+    public int[][] boardState;
     private boolean AI = false;
 
     //Create some paints we will draw with, one for each player piece, and one for the grid lines
@@ -72,6 +73,30 @@ public class BoardView extends View{
         Init();
     }
 
+    public String packageGameState(int size, int client)
+    {
+        String s = "" + client;
+        for(int y = 0; y<size;y++)
+        {
+            for(int x=0; x < size; x++)
+            {
+                s = s + boardState[x][y];
+            }
+        }
+        return s;
+    }
+
+    public void decodeGameState(int size, String s)
+    {
+        Scanner in = new Scanner(s);
+        for(int y = 0; y<size;y++)
+        {
+            for(int x=0; x < size; x++)
+            {
+                boardState[x][y] = Integer.parseInt(String.valueOf(in.findInLine(".").charAt(0)));
+            }
+        }
+    }
     //Show pop up message when player 1 wins
     private void showSimplePopUpBlackWins() {
 
@@ -216,6 +241,36 @@ public class BoardView extends View{
         AlertDialog helpDialog = helpBuilder.create();
         helpDialog.show();
 
+    }
+
+    public boolean checkSuccess(int color, int isClient)
+    {
+        for(int x = 0; x < gridDimension - 1; x++)
+        {
+            for(int y = 0; y < gridDimension - 1; y++)
+            {
+                if( checkSuccessDiagonal1(x, y, color) ||
+                    checkSuccessDiagonal2(x, y, color) ||
+                    checkSuccessHorizontal(x, y, color) ||
+                    checkSuccessVertical(x, y, color)
+                   )
+                {
+                   if(color == 1)
+                   {
+                       scoreValue1++;
+                       score1.setText("" + scoreValue1);
+                   }
+                   else if(color == 2)
+                   {
+                       scoreValue2++;
+                       score2.setText("" + scoreValue2);
+                   }
+                   return true;
+
+                }
+            }
+        }
+        return false;
     }
 
     private boolean checkSuccessHorizontal(int x, int y, int color) {
@@ -412,7 +467,7 @@ public class BoardView extends View{
 
                             if (isBlack) {
                                 boardState[x - 1][y - 1] = 1;
-                                if (parent != null && AI == false)
+                                if (parent != null && AI == false && !online)
                                     playerName.setText("Player 2");
                                 if (AI == true) {
                                     playerName.setText("Computer is thinking...");
@@ -427,11 +482,13 @@ public class BoardView extends View{
                                         }
                                     }
                                 }
-                                isBlack = false;
+                                if(!online)
+                                    isBlack = false;
                             } else if (!isBlack && boardState[x - 1][y - 1] == 0 && AI == false) {
                                 boardState[x - 1][y - 1] = 2;
-                                isBlack = true;
-                                if (parent != null)
+                                if(!online)
+                                    isBlack = true;
+                                if (parent != null && !online)
                                     playerName.setText("Player 1");
                             }
 
@@ -452,7 +509,7 @@ public class BoardView extends View{
 
                                 isBlack = true;
 
-                                if (parent != null)
+                                if (parent != null && !online)
                                     playerName.setText("Player 1");
 
                             } else {
@@ -502,6 +559,7 @@ public class BoardView extends View{
         }
         return false;
     }
+
     protected void onDraw(Canvas canvas) {
         // Parent draw
         super.onDraw(canvas);
@@ -543,6 +601,15 @@ public class BoardView extends View{
         return gridDimension;
     }
 
+    public void setIsBlack(boolean b)
+    {
+        isBlack = b;
+    }
+
+    public boolean getIsBlack()
+    {
+        return isBlack;
+    }
 
     public void setGridDimension(int gridDimension) {
         this.gridDimension = gridDimension;
@@ -574,7 +641,7 @@ public class BoardView extends View{
         {
             circleSize = (float)0.02;
         }
-        initGameBoard();
+        initGameBoard(this.gridDimension);
 
         //Add 1 to grid dimension so that when we draw, we have the right number of intersections
         setGridDimension(getGridDimension() + 1);
@@ -619,10 +686,10 @@ public class BoardView extends View{
     }
 
     //Set up our initial empty game board
-    private void initGameBoard(){
-        for(int x = 0; x < gridDimension; x++)
+    public void initGameBoard(int gridSize){
+        for(int x = 0; x < gridSize; x++)
         {
-            for(int y = 0; y < gridDimension; y++)
+            for(int y = 0; y < gridSize; y++)
             {
                 boardState[x][y] = 0;
             }
@@ -635,11 +702,25 @@ public class BoardView extends View{
         chronometer.start();
     }
 
+    public void resetChronometer()
+    {
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
+    }
     public void setScoreValue1(int x) { scoreValue1 = x;}
+
+    public void setScore1(String s){score1.setText(s);}
+
+    public void setScore2(String s){score2.setText(s);}
 
     public void setScoreValue2(int x) { scoreValue2 = x;}
 
     public void setAI(boolean b) {AI = b;}
+
+    public void setPlayerName(String s)
+    {
+        playerName.setText(s);
+    }
     public position findMove(int x, int y)
     {
         position move;
