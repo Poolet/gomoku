@@ -115,9 +115,9 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                         if(gridClient.checkSuccess(1, 0))
                         {
                             gridClient.initGameBoard(gridClient.getGridDimension() - 1);
+                            gridClient.setTurn(false);
                             gridClient.invalidate();
                         };
-
                     }
 
                     break;
@@ -148,6 +148,8 @@ public class MultiPlayer extends Board implements View.OnClickListener {
 
     protected void swapTurns()
     {
+        gridServer.setTurn(!gridServer.getTurn());
+        gridClient.setTurn(!gridClient.getTurn());
         String s;
         if(mode==0)
         {
@@ -156,10 +158,8 @@ public class MultiPlayer extends Board implements View.OnClickListener {
             if(gridServer.checkSuccess(1, 0)) {
                 gridServer.initGameBoard(gridServer.getGridDimension() - 1);
                 gridServer.invalidate();
-
+                gridServer.setTurn(true);
             }
-
-
             con.write(s.getBytes());
         }
         else
@@ -173,8 +173,6 @@ public class MultiPlayer extends Board implements View.OnClickListener {
             }
             con.write(s.getBytes());
         }
-            gridServer.setTurn(!gridServer.getTurn());
-            gridClient.setTurn(!gridClient.getTurn());
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
