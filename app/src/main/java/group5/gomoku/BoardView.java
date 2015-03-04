@@ -27,6 +27,7 @@ public class BoardView extends View{
     private static MediaPlayer piecePlaced;
     private static MediaPlayer newGame;
     private static MediaPlayer winSound;
+
     //Determine whether we are in multiplayer or not
     private boolean online;
     private boolean isTurn;
@@ -270,6 +271,12 @@ public class BoardView extends View{
                        score2.setText("" + scoreValue2);
                    }
                    winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                    winSound.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        public void onCompletion(MediaPlayer mp) {
+                            mp.release();
+
+                        };
+                    });
                    winSound.start();
                    return true;
 
@@ -485,10 +492,22 @@ public class BoardView extends View{
                                             scoreValue1++;
                                             score1.setText("" + scoreValue1);
                                             winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                                            winSound.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                                public void onCompletion(MediaPlayer mp) {
+                                                    mp.release();
+
+                                                };
+                                            });
                                             winSound.start();
                                             showSimplePopUpBlackWins();
                                         }else {
                                             piecePlaced = MediaPlayer.create(getContext(), R.raw.piece_placed);
+                                            piecePlaced.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                                public void onCompletion(MediaPlayer mp) {
+                                                    mp.release();
+
+                                                };
+                                            });
                                             piecePlaced.start();
                                         }
                                     }
@@ -514,11 +533,23 @@ public class BoardView extends View{
                                             checkSuccessDiagonal2(move.getX(), move.getY(), 2)) {
                                         scoreValue2++;
                                         winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                                        winSound.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                            public void onCompletion(MediaPlayer mp) {
+                                                mp.release();
+
+                                            };
+                                        });
                                         winSound.start();
                                         score2.setText("" + scoreValue2);
                                         showSimplePopUpWhiteWins();
                                     } else {
                                         piecePlaced = MediaPlayer.create(getContext(), R.raw.piece_placed);
+                                        piecePlaced.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                            public void onCompletion(MediaPlayer mp) {
+                                                mp.release();
+
+                                            };
+                                        });
                                         piecePlaced.start();
                                     }
                                 }
@@ -537,12 +568,24 @@ public class BoardView extends View{
                                             checkSuccessDiagonal2(x - 1, y - 1, 2)) {
                                         scoreValue2++;
                                         winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                                        winSound.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                            public void onCompletion(MediaPlayer mp) {
+                                                mp.release();
+
+                                            };
+                                        });
                                         winSound.start();
                                         score2.setText("" + scoreValue2);
                                         showSimplePopUpWhiteWins();
                                     }
                                     else {
                                         piecePlaced = MediaPlayer.create(getContext(), R.raw.piece_placed);
+                                        piecePlaced.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                            public void onCompletion(MediaPlayer mp) {
+                                                mp.release();
+
+                                            };
+                                        });
                                         piecePlaced.start();
                                     }
                                 } else if (!isBlack) {
@@ -552,11 +595,23 @@ public class BoardView extends View{
                                             checkSuccessDiagonal2(x - 1, y - 1, 1)) {
                                         scoreValue1++;
                                         winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                                        winSound.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                            public void onCompletion(MediaPlayer mp) {
+                                                mp.release();
+
+                                            };
+                                        });
                                         winSound.start();
                                         score1.setText("" + scoreValue1);
                                         showSimplePopUpBlackWins();
                                     } else {
                                         piecePlaced = MediaPlayer.create(getContext(), R.raw.piece_placed);
+                                        piecePlaced.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                            public void onCompletion(MediaPlayer mp) {
+                                                mp.release();
+
+                                            };
+                                        });
                                         piecePlaced.start();
                                     }
                                 }
@@ -690,6 +745,7 @@ public class BoardView extends View{
         whitePiece = new Paint(Paint.ANTI_ALIAS_FLAG);
         whitePiece.setStyle(Paint.Style.FILL);
         whitePiece.setColor(Color.WHITE);
+
     }
 
     //Convert screen clicks to the right spot on the game board
@@ -728,7 +784,14 @@ public class BoardView extends View{
         if(!(parent instanceof MultiPlayer))
         {
             newGame = MediaPlayer.create(this.getContext(), R.raw.new_game);
+            newGame.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp) {
+                    mp.release();
+
+                };
+            });
             newGame.start();
+
         }
         this.chronometer = chronometer;
         chronometer.setBase(SystemClock.elapsedRealtime());
@@ -738,6 +801,12 @@ public class BoardView extends View{
     public void playPiecePlaced()
     {
         piecePlaced = MediaPlayer.create(this.getContext(), R.raw.piece_placed);
+        piecePlaced.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+
+            };
+        });
         piecePlaced.start();
     }
     public void resetChronometer()

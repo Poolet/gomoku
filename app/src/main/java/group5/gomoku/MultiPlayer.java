@@ -41,7 +41,6 @@ public class MultiPlayer extends Board implements View.OnClickListener {
     View hostGame;
     View joinGame;
     private static MediaPlayer newGame;
-    private static MediaPlayer piecePlaced;
     Chronometer chronometer;
     int turn;
     int mode = 1;
@@ -138,6 +137,12 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                             gridClient.setVisibility(View.INVISIBLE);
                             //draw board for server here
                             newGame = MediaPlayer.create(MultiPlayer.this, R.raw.new_game);
+                            newGame.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                public void onCompletion(MediaPlayer mp) {
+                                    mp.release();
+
+                                };
+                            });
                             newGame.start();
                             chronometer = (Chronometer) findViewById(R.id.chronometer);
                             gridServer.setParent(MultiPlayer.this, chronometer);
