@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -39,6 +40,8 @@ public class MultiPlayer extends Board implements View.OnClickListener {
     View getDevices;
     View hostGame;
     View joinGame;
+    private static MediaPlayer newGame;
+    private static MediaPlayer piecePlaced;
     Chronometer chronometer;
     int turn;
     int mode = 1;
@@ -74,6 +77,8 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                             gridServer.setVisibility(View.INVISIBLE);
 
                             chronometer = (Chronometer) findViewById(R.id.chronometer);
+                            MediaPlayer mp = MediaPlayer.create(MultiPlayer.this, R.raw.new_game);
+                            mp.start();
                             gridClient.setParent(MultiPlayer.this, chronometer);
                             gridClient.setGridDimension(10);
                             gridClient.setOnline(true);
@@ -98,6 +103,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                     int isClient = Integer.parseInt(String.valueOf(in.findInLine(".").charAt(0)));
                     s = in.next();
                     if(isClient == 1) {
+                        gridServer.playPiecePlaced();
                         gridServer.resetChronometer();
                         gridServer.decodeGameState(10, s);
                         gridServer.invalidate();
@@ -109,6 +115,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
 
                     }
                     else {
+                        gridClient.playPiecePlaced();
                         gridClient.resetChronometer();
                         gridClient.decodeGameState(10, s);
                         gridClient.invalidate();
@@ -130,6 +137,8 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                             rLayout.setVisibility(View.INVISIBLE);
                             gridClient.setVisibility(View.INVISIBLE);
                             //draw board for server here
+                            newGame = MediaPlayer.create(MultiPlayer.this, R.raw.new_game);
+                            newGame.start();
                             chronometer = (Chronometer) findViewById(R.id.chronometer);
                             gridServer.setParent(MultiPlayer.this, chronometer);
                             gridServer.setGridDimension(10);
@@ -169,11 +178,11 @@ public class MultiPlayer extends Board implements View.OnClickListener {
             if(gridClient.checkSuccess(2, 0)) {
                 gridClient.initGameBoard(gridClient.getGridDimension() - 1);
                 gridClient.invalidate();
-
             }
             con.write(s.getBytes());
         }
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

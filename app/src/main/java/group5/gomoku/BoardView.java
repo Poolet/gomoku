@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.AttributeSet;
@@ -23,6 +24,9 @@ import java.util.Scanner;
  */
 public class BoardView extends View{
 
+    private static MediaPlayer piecePlaced;
+    private static MediaPlayer newGame;
+    private static MediaPlayer winSound;
     //Determine whether we are in multiplayer or not
     private boolean online;
     private boolean isTurn;
@@ -265,6 +269,8 @@ public class BoardView extends View{
                        scoreValue2++;
                        score2.setText("" + scoreValue2);
                    }
+                   winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                   winSound.start();
                    return true;
 
                 }
@@ -478,7 +484,12 @@ public class BoardView extends View{
                                                 checkSuccessDiagonal2(x - 1, y - 1, 1)) {
                                             scoreValue1++;
                                             score1.setText("" + scoreValue1);
+                                            winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                                            winSound.start();
                                             showSimplePopUpBlackWins();
+                                        }else {
+                                            piecePlaced = MediaPlayer.create(getContext(), R.raw.piece_placed);
+                                            piecePlaced.start();
                                         }
                                     }
                                 }
@@ -502,8 +513,13 @@ public class BoardView extends View{
                                             checkSuccessDiagonal1(move.getX(), move.getY(), 2) ||
                                             checkSuccessDiagonal2(move.getX(), move.getY(), 2)) {
                                         scoreValue2++;
+                                        winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                                        winSound.start();
                                         score2.setText("" + scoreValue2);
                                         showSimplePopUpWhiteWins();
+                                    } else {
+                                        piecePlaced = MediaPlayer.create(getContext(), R.raw.piece_placed);
+                                        piecePlaced.start();
                                     }
                                 }
 
@@ -520,8 +536,14 @@ public class BoardView extends View{
                                             checkSuccessDiagonal1(x - 1, y - 1, 2) ||
                                             checkSuccessDiagonal2(x - 1, y - 1, 2)) {
                                         scoreValue2++;
+                                        winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                                        winSound.start();
                                         score2.setText("" + scoreValue2);
                                         showSimplePopUpWhiteWins();
+                                    }
+                                    else {
+                                        piecePlaced = MediaPlayer.create(getContext(), R.raw.piece_placed);
+                                        piecePlaced.start();
                                     }
                                 } else if (!isBlack) {
                                     if (checkSuccessHorizontal(x - 1, y - 1, 1) ||
@@ -529,8 +551,13 @@ public class BoardView extends View{
                                             checkSuccessDiagonal1(x - 1, y - 1, 1) ||
                                             checkSuccessDiagonal2(x - 1, y - 1, 1)) {
                                         scoreValue1++;
+                                        winSound = MediaPlayer.create(this.getContext(), R.raw.start_tone);
+                                        winSound.start();
                                         score1.setText("" + scoreValue1);
                                         showSimplePopUpBlackWins();
+                                    } else {
+                                        piecePlaced = MediaPlayer.create(getContext(), R.raw.piece_placed);
+                                        piecePlaced.start();
                                     }
                                 }
 
@@ -539,10 +566,11 @@ public class BoardView extends View{
                             if (num_empty_spaces == 0)
                                 showSimplePopUpGameTie();
 
-                        }
-                        if(online)
-                        {
-                            ((MultiPlayer)parent).swapTurns();
+
+                            if(online)
+                            {
+                                ((MultiPlayer)parent).swapTurns();
+                            }
                         }
 
                         //Redraw the game board screen to reflect new pieces.
@@ -697,11 +725,21 @@ public class BoardView extends View{
     }
     public void setParent(Board parent, Chronometer chronometer) {
         this.parent = parent;
+        if(!(parent instanceof MultiPlayer))
+        {
+            newGame = MediaPlayer.create(this.getContext(), R.raw.new_game);
+            newGame.start();
+        }
         this.chronometer = chronometer;
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
     }
 
+    public void playPiecePlaced()
+    {
+        piecePlaced = MediaPlayer.create(this.getContext(), R.raw.piece_placed);
+        piecePlaced.start();
+    }
     public void resetChronometer()
     {
         chronometer.setBase(SystemClock.elapsedRealtime());
