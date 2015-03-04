@@ -36,6 +36,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_alignStart="@id/play_button"
+            android:layout_alignLeft="@id/play_button"
             android:layout_gravity="center_horizontal"
             android:background="#00ffa877" />
 
