@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
     private static final int CONNECTION_SUCCESS = 0;
     BoardView gridServer;
     BoardView gridClient;
+    int gridSize = 0;
     View getDevices;
     View hostGame;
     View joinGame;
@@ -56,6 +58,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
     BluetoothAdapter BA;
     private static final int SUCCESS_CONNECT = 0;
     private static final int MESSAGE_READ = 1;
+    private static final int INIT_CLIENT_BOARD = 3;
     Set<BluetoothDevice> pairedDevices;
     ArrayAdapter<String> listAdapter;
     ArrayList list = new ArrayList();
@@ -68,70 +71,84 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                 case CONNECTION_SUCCESS:
                     // DO something
                     //ConnectedThread connectedThread = new ConnectedThread((BluetoothSocket)msg.obj);
-                    Toast.makeText(getApplicationContext(), "CONNECT", Toast.LENGTH_SHORT).show();
+
                     MultiPlayer.this.runOnUiThread(new Runnable() {
                         public void run() {
                             rLayoutBoard.setVisibility(View.VISIBLE);
                             rLayout.setVisibility(View.INVISIBLE);
                             gridServer.setVisibility(View.INVISIBLE);
-
+                            gridClient.setGridDimension(gridSize);
                             chronometer = (Chronometer) findViewById(R.id.chronometer);
                             MediaPlayer mp = MediaPlayer.create(MultiPlayer.this, R.raw.new_game);
                             mp.start();
                             gridClient.setParent(MultiPlayer.this, chronometer);
-                            gridClient.setGridDimension(10);
+                            gridClient.setGridDimension(gridSize);
                             gridClient.setOnline(true);
                             gridClient.setTurn(false);
                             gridClient.Init();
                             gridClient.setIsBlack(false);
                             gridClient.setPlayerName("Player 2");
                             gridClient.invalidate();
-
                             //draw board for client here
                         }
                     });
-
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     String s = new String(readBuf);
-                    Toast.makeText(getApplicationContext(), "Your turn!", Toast.LENGTH_SHORT).show();
+
                     gridClient.setTurn(!gridClient.getTurn());
                     gridServer.setTurn(!gridServer.getTurn());
                     Scanner in = new Scanner(s);
-                    int isClient = Integer.parseInt(String.valueOf(in.findInLine(".").charAt(0)));
-                    s = in.next();
-                    if(isClient == 1) {
-                        gridServer.playPiecePlaced();
-                        gridServer.resetChronometer();
-                        gridServer.decodeGameState(10, s);
-                        gridServer.invalidate();
-                        if(gridServer.checkSuccess(2, 0))
-                        {
-                            gridServer.initGameBoard(gridServer.getGridDimension() - 1);
-                            gridServer.invalidate();
-                        };
-
+                    int isInit = Integer.parseInt(String.valueOf(in.findInLine(".").charAt(0)));
+                    if(isInit == 3)
+                    {
+                        gridSize = Integer.valueOf(in.next().substring(0, 2));
+                        gridClient.setGridDimension(gridSize);
+                        gridClient.setOnline(true);
+                        gridClient.setTurn(false);
+                        gridClient.Init();
+                        gridClient.setIsBlack(false);
+                        gridClient.setPlayerName("Player 2");
+                        gridClient.invalidate();
                     }
                     else {
-                        gridClient.playPiecePlaced();
-                        gridClient.resetChronometer();
-                        gridClient.decodeGameState(10, s);
-                        gridClient.invalidate();
-                        if(gridClient.checkSuccess(1, 0))
-                        {
-                            gridClient.initGameBoard(gridClient.getGridDimension() - 1);
-                            gridClient.setTurn(false);
+                        int isClient = Integer.parseInt(String.valueOf(in.findInLine(".").charAt(0)));
+                        s = in.next();
+                        if (isClient == 1) {
+                            Toast.makeText(getApplicationContext(), "Your turn!", Toast.LENGTH_SHORT).show();
+                            gridServer.playPiecePlaced();
+                            gridServer.resetChronometer();
+                            gridServer.decodeGameState(gridSize, s);
+                            gridServer.invalidate();
+                            if (gridServer.checkSuccess(2, 0)) {
+                                gridServer.initGameBoard(gridServer.getGridDimension() - 1);
+                                Toast.makeText(getApplicationContext(), "White wins!", Toast.LENGTH_LONG).show();
+                                gridServer.invalidate();
+                            }
+                        } else {
+                            gridClient.playPiecePlaced();
+                            gridClient.resetChronometer();
+                            gridClient.decodeGameState(gridSize, s);
                             gridClient.invalidate();
-                        };
+                            if (gridClient.checkSuccess(1, 0)) {
+                                gridClient.initGameBoard(gridClient.getGridDimension() - 1);
+                                Toast.makeText(getApplicationContext(), "Black wins!", Toast.LENGTH_LONG).show();
+                                gridClient.setTurn(false);
+                                gridClient.invalidate();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Your turn!", Toast.LENGTH_SHORT).show();
+                            }
+                            ;
+                        }
                     }
+
 
                     break;
 
                 case CLIENT_READY:
                     MultiPlayer.this.runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "In client ready", Toast.LENGTH_SHORT).show();
                             rLayoutBoard.setVisibility(View.VISIBLE);
                             rLayout.setVisibility(View.INVISIBLE);
                             gridClient.setVisibility(View.INVISIBLE);
@@ -146,20 +163,42 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                             newGame.start();
                             chronometer = (Chronometer) findViewById(R.id.chronometer);
                             gridServer.setParent(MultiPlayer.this, chronometer);
-                            gridServer.setGridDimension(10);
+                            gridServer.setGridDimension(gridSize);
                             gridServer.setOnline(true);
                             gridServer.setIsBlack(true);
                             gridServer.setTurn(true);
                             gridServer.Init();
                             gridServer.setPlayerName("Player 1");
                             gridServer.invalidate();
+                            ConnectedThread con =new ConnectedThread(writerSSocket);
+                            String s = "" + '3' + gridSize;
+                            con.write(s.getBytes());
                         }
                     });
                     break;
             }
         }
     };
+    public void onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
 
+        // Check which radio button was clicked
+        switch(view.getId()) {
+            case R.id.radio10:
+                if (checked)
+                    gridSize = 10;
+                    break;
+            case R.id.radio15:
+                if (checked)
+                    gridSize = 15;
+                    break;
+            case R.id.radio20:
+                if (checked)
+                    gridSize = 20;
+                    break;
+        }
+    }
     protected void swapTurns()
     {
         gridServer.setTurn(!gridServer.getTurn());
@@ -170,9 +209,11 @@ public class MultiPlayer extends Board implements View.OnClickListener {
             ConnectedThread con =new ConnectedThread(writerSSocket);
             s = gridServer.packageGameState(gridServer.getGridDimension() - 1, 0);
             if(gridServer.checkSuccess(1, 0)) {
+                Toast.makeText(getApplicationContext(), "You win!", Toast.LENGTH_LONG).show();
                 gridServer.initGameBoard(gridServer.getGridDimension() - 1);
                 gridServer.invalidate();
                 gridServer.setTurn(true);
+                Toast.makeText(getApplicationContext(), "Your turn!", Toast.LENGTH_SHORT).show();
             }
             con.write(s.getBytes());
         }
@@ -181,6 +222,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
             ConnectedThread con = new ConnectedThread(writerCSocket);
                 s = gridClient.packageGameState(gridClient.getGridDimension() - 1, 1);
             if(gridClient.checkSuccess(2, 0)) {
+                Toast.makeText(getApplicationContext(), "You win!", Toast.LENGTH_LONG).show();
                 gridClient.initGameBoard(gridClient.getGridDimension() - 1);
                 gridClient.invalidate();
             }
@@ -233,11 +275,6 @@ public class MultiPlayer extends Board implements View.OnClickListener {
             finish();
         } else if (!BA.isEnabled()) {
             turnOn();
-            Toast.makeText(getApplicationContext(), "Turned on"
-                    , Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(getApplicationContext(), "Already on",
-                    Toast.LENGTH_LONG).show();
         }
 
         pairedDevices = BA.getBondedDevices();
@@ -248,9 +285,14 @@ public class MultiPlayer extends Board implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.button:
                 mode = 0;
-                AcceptThread at = new AcceptThread();
-
-                at.start();
+                if(gridSize != 0) {
+                    AcceptThread at = new AcceptThread();
+                    at.start();
+                    Toast.makeText(this, "Game hosted. Awaiting connection from opponent...",Toast.LENGTH_LONG).show();
+                } else
+                {
+                    Toast.makeText(this, "Please select a game size before hosting!", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.button2:
                 listAdapter.clear();
@@ -266,6 +308,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                             if (bt.getName().equals(((TextView) view).getText())) {
                                 ConnectThread connectThread = new ConnectThread(bt);
                                 connectThread.start();
+
 
 
                             }
@@ -377,11 +420,14 @@ public class MultiPlayer extends Board implements View.OnClickListener {
 
             BA.cancelDiscovery();
 
+
+
             try {
                 // Connect the device through the socket. This will block
                 // until it succeeds or throws an exception
                 mmSocket.connect();
-                mHandler.obtainMessage(CONNECTION_SUCCESS,mmSocket).sendToTarget();
+
+                mHandler.obtainMessage(CONNECTION_SUCCESS, mmSocket).sendToTarget();
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and get out
                 try {
@@ -447,6 +493,11 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                     break;
                 }
             }
+        }
+
+        public void sendGameSize(int n)
+        {
+            mHandler.obtainMessage(INIT_CLIENT_BOARD, -1, n).sendToTarget();
         }
 
         /* Call this from the main activity to send data to the remote device */

@@ -14,7 +14,8 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:background="@drawable/menu_background"
         android:id="@+id/relLayout">
-    <Button
+
+        <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Host Game"
@@ -38,8 +39,9 @@
         android:id="@+id/listView2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/button"
-        android:layout_below="@+id/textView6" />
+        android:layout_below="@+id/textView6"
+        android:layout_above="@+id/radio10"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -50,7 +52,47 @@
         android:textSize="35dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
-</RelativeLayout>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10x10"
+            android:id="@+id/radio10"
+            android:layout_above="@+id/button"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:checked="false"
+            android:layout_alignRight="@+id/button"
+            android:layout_alignEnd="@+id/button"
+            android:textSize="20dp"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15x15"
+            android:id="@+id/radio15"
+            android:checked="false"
+            android:layout_above="@+id/button"
+            android:layout_centerHorizontal="true"
+            android:textSize="20dp"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20x20"
+            android:id="@+id/radio20"
+            android:checked="false"
+            android:textSize="20dp"
+            android:layout_above="@+id/button2"
+            android:layout_alignLeft="@+id/button2"
+            android:layout_alignStart="@+id/button2"
+            android:onClick="onRadioButtonClicked"/>
+
+    </RelativeLayout>
+
+
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

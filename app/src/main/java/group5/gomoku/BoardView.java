@@ -80,7 +80,7 @@ public class BoardView extends View{
 
     public String packageGameState(int size, int client)
     {
-        String s = "" + client;
+        String s = "" + '0' + client;
         for(int y = 0; y<size;y++)
         {
             for(int x=0; x < size; x++)
