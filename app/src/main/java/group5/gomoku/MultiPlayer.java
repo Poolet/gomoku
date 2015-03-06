@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -304,6 +305,9 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                 LVlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        RadioGroup radio = (RadioGroup)findViewById(R.id.radioGroup);
+                        radio.clearCheck();
+                        gridSize = 0;
                         for(BluetoothDevice bt : pairedDevices) {
                             if (bt.getName().equals(((TextView) view).getText())) {
                                 ConnectThread connectThread = new ConnectThread(bt);
