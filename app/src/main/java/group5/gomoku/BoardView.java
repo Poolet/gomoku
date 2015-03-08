@@ -248,6 +248,181 @@ public class BoardView extends View{
 
     }
 
+    public boolean checkGameStatus(int start_x, int start_y,
+                                   int end_x, int end_y) {
+        int i, j, x, y, num_uniq = 5;
+        int b_count = 0, w_count = 0;
+        int black = 1, white = 2;
+
+        //check horizontal
+        for (i = start_y; i <= end_y; i++) {
+
+            b_count = 0;
+            w_count = 0;
+
+            for (j = start_x; j <= end_x; j++) {
+                if (boardState[i][j] == black) {
+                    b_count++;
+                    w_count = 0;
+                } else if (boardState[i][j] == white) {
+                    w_count++;
+                    b_count = 0;
+                } else {
+                    w_count++;
+                    b_count++;
+                }
+
+                if (b_count == num_uniq || w_count == num_uniq) {
+                    if (j == end_x || j - (num_uniq - 1) == start_x)
+                        return true;
+                }
+
+                if (b_count == num_uniq) {
+                    if ((j + 1 <= end_x && boardState[i][j + 1] != white) ||
+                            (j - num_uniq >= start_x && boardState[i][j - num_uniq] != white))
+                        return true;
+                }
+
+                if (w_count == num_uniq) {
+                    if ((j + 1 <= end_x && boardState[i][j + 1] != black) ||
+                            (j - num_uniq >= start_x && boardState[i][j - num_uniq] != black))
+                        return true;
+                }
+            }
+        }
+
+        //check vertical
+        for (j = start_x; j <= end_x; j++) {
+            b_count = 0;
+            w_count = 0;
+            for (i = start_y; i <= end_y; i++) {
+                if (boardState[i][j] == black) {
+                    b_count++;
+                    w_count = 0;
+                } else if (boardState[i][j] == white) {
+                    w_count++;
+                    b_count = 0;
+                } else {
+                    w_count++;
+                    b_count++;
+                }
+
+                if (b_count == num_uniq || w_count == num_uniq) {
+                    if (i == end_y || i - (num_uniq - 1) == start_y)
+                        return true;
+                }
+
+                if (b_count == num_uniq) {
+                    if ((i+1 <= end_y && boardState[i + 1][j] != white) ||
+                            (i - num_uniq >= start_y && boardState[i - num_uniq][j] != white))
+                        return true;
+                }
+
+                if (b_count == num_uniq) {
+                    if ((i+1 <= end_y && boardState[i + 1][j] != black) ||
+                            (i - num_uniq >= start_y && boardState[i - num_uniq][j] != black))
+                        return true;
+                }
+            }
+        }
+
+        // check diagonal1
+        for (x = start_x; x <= end_x; x++) {
+            for (y = start_y; y <= end_y; y++) {
+                if (x != start_x && y != start_y)
+                    continue;
+
+                b_count = 0;
+                w_count = 0;
+
+                for (i = y, j = x; i <= end_y && j <= end_x; i++, j++) {
+
+                    if (boardState[i][j] == black) {
+                        b_count++;
+                        w_count = 0;
+                    } else if (boardState[i][j] == white) {
+                        w_count++;
+                        b_count = 0;
+                    } else {
+                        w_count++;
+                        b_count++;
+                    }
+
+                    if ((b_count == num_uniq || w_count == num_uniq) &&
+                            (i == end_y || j == end_x ||
+                            i - num_uniq - 1 == start_y ||
+                            j - num_uniq - 1 == start_x))
+                        return true;
+
+                    if (b_count == num_uniq){
+                        if ((i+1 <= end_y && j+1 <= end_x &&
+                                boardState[i+1][j+1] != white) ||
+                                (i-num_uniq >= start_y && j-num_uniq >= start_x &&
+                                        boardState[i-num_uniq][j-num_uniq] != white))
+                            return true;
+                    }
+
+                    if (w_count == num_uniq){
+                        if ((i+1 <= end_y && j+1 <= end_x &&
+                                boardState[i+1][j+1] != black) ||
+                                (i-num_uniq >= start_y && j-num_uniq >= start_x &&
+                                        boardState[i-num_uniq][j-num_uniq] != black))
+                            return true;
+                    }
+
+                }
+            }
+        }
+
+        // check diagonal2
+        for (x = start_x; x <= end_x; x++) {
+            for (y = start_y; y <= end_y; y++) {
+                if (x != end_x && y != end_y)
+                    continue;
+
+                b_count = 0;
+                w_count = 0;
+
+                for (i = y, j = x; i >= start_y && j <= end_x; i--, j++) {
+
+                    if (boardState[i][j] == black) {
+                        b_count++;
+                        w_count = 0;
+                    } else if (boardState[i][j] == white) {
+                        w_count++;
+                        b_count = 0;
+                    } else {
+                        w_count++;
+                        b_count++;
+                    }
+
+                    if ((b_count == num_uniq || w_count == num_uniq) &&
+                            (i == start_y || j == end_x ||
+                            i + num_uniq - 1 == end_y ||
+                            j - num_uniq - 1 == start_x))
+                        return true;
+
+                    if (b_count == num_uniq) {
+                        if ((i - 1 >= start_y && j + 1 <= end_x &&
+                                boardState[i - 1][j + 1] != white) ||
+                                (i + num_uniq <= end_y && j - num_uniq >= start_x &&
+                                        boardState[i + num_uniq][j - num_uniq] != white))
+                            return true;
+                    }
+
+                    if (w_count == num_uniq) {
+                        if ((i - 1 >= start_y && j + 1 <= end_x &&
+                                boardState[i - 1][j + 1] != black) ||
+                                (i + num_uniq <= end_y && j - num_uniq >= start_x &&
+                                        boardState[i + num_uniq][j - num_uniq] != black))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean checkSuccess(int color, int isClient)
     {
         for(int x = 0; x < gridDimension - 1; x++)
@@ -617,6 +792,10 @@ public class BoardView extends View{
                                 }
 
                             }
+
+                            if (!checkGameStatus(0, 0, gridDimension-2, gridDimension-2))
+                                showSimplePopUpGameTie();
+
                             //check if board is full
                             if (num_empty_spaces == 0)
                                 showSimplePopUpGameTie();
