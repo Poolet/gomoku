@@ -39,6 +39,8 @@ public class MultiPlayer extends Board implements View.OnClickListener {
     private static final int CONNECTION_SUCCESS = 0;
     BoardView gridServer;
     BoardView gridClient;
+    private static BluetoothServerSocket mmServerSocket;
+    private static BluetoothSocket mmSocket;
     int isClient;
     int gridSize = 0;
     View getDevices;
@@ -340,6 +342,14 @@ public class MultiPlayer extends Board implements View.OnClickListener {
 
                 break;
             case R.id.button_home:
+
+                try {
+                    mmServerSocket.close();
+                    mmSocket.close();
+
+                } catch (Exception e) {
+
+                }
                 startActivity(new Intent(this, HomeMenu.class));
                // Toast.makeText(getApplicationContext(), "pressed home", Toast.LENGTH_LONG).show();
                 break;
@@ -379,7 +389,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
     }
 
     private class AcceptThread extends Thread {
-        private final BluetoothServerSocket mmServerSocket;
+
 
         public AcceptThread() {
             // Use a temporary object that is later assigned to mmServerSocket,
@@ -485,7 +495,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
     }
 
     private class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
+
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
