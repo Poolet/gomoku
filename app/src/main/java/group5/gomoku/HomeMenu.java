@@ -20,8 +20,6 @@ public class HomeMenu extends ActionBarActivity implements OnClickListener {
         btnPlay.setOnClickListener(this);
         View btnRules = (Button) findViewById(R.id.rules_button);
         btnRules.setOnClickListener(this);
-        View btnSettings = (Button) findViewById(R.id.settings_button);
-        btnSettings.setOnClickListener(this);
         View btnExit = (Button) findViewById(R.id.exit_button);
         btnExit.setOnClickListener(this);
 
