@@ -55,19 +55,6 @@
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:text="Settings"
-            android:id="@+id/settings_button"
-            android:layout_marginTop="53dp"
-            android:layout_below="@+id/rules_button"
-            android:layout_alignLeft="@+id/rules_button"
-            android:layout_alignStart="@+id/rules_button"
-            android:clickable="true"
-            android:layout_gravity="center_horizontal"
-            android:background="#00fffade" />
-
-        <Button
-            android:layout_width="wrap_content"
             android:layout_height="31dp"
             android:text="Exit"
             android:id="@+id/exit_button"

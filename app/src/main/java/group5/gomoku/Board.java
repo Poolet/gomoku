@@ -15,12 +15,15 @@ public class Board extends Activity implements View.OnClickListener{
     BoardView grid;
     int score1;
     int score2;
+    Bundle gameInfo;
+    Intent i;
     //Chronometer cr= (Chronometer) findViewById(R.id.chronometer);
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
         Bundle bundle = getIntent().getExtras();
+        Bundle gameInfo;
         int boardSize = bundle.getInt("boardSize");
         boolean AI = bundle.getBoolean("AI");
         grid = (BoardView)findViewById(R.id.board_grid);
@@ -49,8 +52,8 @@ public class Board extends Activity implements View.OnClickListener{
         back.setOnClickListener(this);
         Button quit =(Button) findViewById(R.id.button_quit);
         quit.setOnClickListener(this);
-        Button scores =(Button) findViewById(R.id.button_scores);
-        scores.setOnClickListener(this);
+        Button newRound =(Button) findViewById(R.id.button_new_round);
+        newRound.setOnClickListener(this);
     }
     @Override
     public void onClick(View v) {
@@ -64,15 +67,21 @@ public class Board extends Activity implements View.OnClickListener{
             case R.id.button_quit:
                 startActivity(new Intent(this, HomeMenu.class));
                 break;
-            case R.id.button_scores:
-                Bundle gameInfo = new Bundle();
-                gameInfo.putBoolean("AI", grid.getAI());
-                gameInfo.putInt("score1", grid.getScoreValue1());
-                gameInfo.putInt("score2", grid.getScoreValue2());
-                Intent i = new Intent();
+            case R.id.button_new_round:
+                gameInfo = new Bundle();
+                gameInfo.putInt("boardSize", grid.gridDimension-1);
+                gameInfo.putInt("score1", 0);
+                gameInfo.putInt("score2", 0);
+                gameInfo.putBoolean("AI", grid.AI);
+
+                Intent i=new Intent();
+                if(!grid.online)
+                    i.setClass(grid.getContext(),Board.class);
+                else
+                    i.setClass(grid.getContext(), MultiPlayer.class);
                 i.putExtras(gameInfo);
-                i.setClass(this, Scores.class);
-                startActivity(i);
+
+                grid.getContext().startActivity(i);
                 break;
         }
     }

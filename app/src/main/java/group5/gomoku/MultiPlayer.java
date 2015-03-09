@@ -39,10 +39,16 @@ public class MultiPlayer extends Board implements View.OnClickListener {
     private static final int CONNECTION_SUCCESS = 0;
     BoardView gridServer;
     BoardView gridClient;
+    int isClient;
     int gridSize = 0;
     View getDevices;
     View hostGame;
     View joinGame;
+    Button home;
+    Button back;
+    Button newRound;
+    TextView score1;
+    TextView score2;
     private static MediaPlayer newGame;
     Chronometer chronometer;
     int turn;
@@ -114,7 +120,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                         gridClient.invalidate();
                     }
                     else {
-                        int isClient = Integer.parseInt(String.valueOf(in.findInLine(".").charAt(0)));
+                         isClient = Integer.parseInt(String.valueOf(in.findInLine(".").charAt(0)));
                         s = in.next();
                         if (isClient == 1) {
                             Toast.makeText(getApplicationContext(), "Your turn!", Toast.LENGTH_SHORT).show();
@@ -200,6 +206,10 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                     break;
         }
     }
+
+
+
+
     protected void swapTurns()
     {
         gridServer.setTurn(!gridServer.getTurn());
@@ -237,13 +247,21 @@ public class MultiPlayer extends Board implements View.OnClickListener {
         setContentView(R.layout.activity_mutliplayer);
         gridServer = (BoardView)findViewById(R.id.board_grid);
         gridClient = (BoardView)findViewById(R.id.board_grid2);
-        hostGame = (Button) findViewById(R.id.button);
-        joinGame = (Button) findViewById(R.id.button2);
+        hostGame = (Button) findViewById(R.id.buttonHostGame);
+        joinGame = (Button) findViewById(R.id.buttonListGames);
+        home = (Button) findViewById(R.id.button_home);
+        back=(Button) findViewById(R.id.button_back);
+        newRound = (Button) findViewById(R.id.button_home);
         LVlistView = (ListView) findViewById(R.id.listView2);
         rLayout = (RelativeLayout) findViewById(R.id.relLayout);
         rLayoutBoard = (RelativeLayout) findViewById(R.id.rLayoutBoard);
+        score1 = (TextView) findViewById(R.id.score1);
+        score2 = (TextView) findViewById(R.id.score2);
         hostGame.setOnClickListener(this);
         joinGame.setOnClickListener(this);
+
+
+        newRound.setOnClickListener(this);
         iFilter= new IntentFilter(BluetoothDevice.ACTION_FOUND);
         rLayout.setVisibility(View.VISIBLE);
         rLayoutBoard.setVisibility(View.INVISIBLE);
@@ -284,7 +302,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button:
+            case R.id.buttonHostGame:
                 mode = 0;
                 if(gridSize != 0) {
                     AcceptThread at = new AcceptThread();
@@ -295,7 +313,7 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                     Toast.makeText(this, "Please select a game size before hosting!", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.button2:
+            case R.id.buttonListGames:
                 listAdapter.clear();
                 pairedDevices = BA.getBondedDevices();
                 for (BluetoothDevice bt : pairedDevices) {
@@ -321,8 +339,14 @@ public class MultiPlayer extends Board implements View.OnClickListener {
                 });
 
                 break;
+            case R.id.button_home:
+                startActivity(new Intent(this, HomeMenu.class));
+               // Toast.makeText(getApplicationContext(), "pressed home", Toast.LENGTH_LONG).show();
+                break;
         }
     }
+
+
     private void forClient(BluetoothSocket ClientSocket)
     {
         writerCSocket = ClientSocket;

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/menu_background"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu_background"
     >
 
     <TextView
@@ -22,7 +22,7 @@
         android:id="@+id/board_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/button_scores"
+        android:layout_below="@+id/button_new_round"
         android:layout_above="@+id/button_quit"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -54,8 +54,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scores"
-        android:id="@+id/button_scores"
+        android:text="New Round"
+        android:id="@+id/button_new_round"
         android:layout_below="@+id/playerName"
         android:layout_toLeftOf="@+id/button_back"
         android:layout_toRightOf="@+id/button_quit"
@@ -69,8 +69,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignTop="@+id/button_quit"
         android:layout_toRightOf="@+id/button_quit"
-        android:layout_alignRight="@+id/button_scores"
-        android:layout_alignEnd="@+id/button_scores"
+        android:layout_alignRight="@+id/button_new_round"
+        android:layout_alignEnd="@+id/button_new_round"
         android:gravity="center_vertical|bottom|center_horizontal"
         android:textSize="40dp" />
 
@@ -87,7 +87,7 @@
         android:layout_alignEnd="@+id/button_back"
         android:layout_alignLeft="@+id/button_back"
         android:layout_alignStart="@+id/button_back"
-        android:layout_alignTop="@+id/button_scores"
+        android:layout_alignTop="@+id/button_new_round"
         android:textSize="40dp" />
 
     <TextView
@@ -99,11 +99,11 @@
         android:text="0"
         android:gravity="center_vertical|center_horizontal"
         android:textSize="40dp"
-        android:layout_alignTop="@+id/button_scores"
+        android:layout_alignTop="@+id/button_new_round"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_toLeftOf="@+id/button_scores"
-        android:layout_toStartOf="@+id/button_scores" />
+        android:layout_toLeftOf="@+id/button_new_round"
+        android:layout_toStartOf="@+id/button_new_round" />
 
 
 </RelativeLayout>

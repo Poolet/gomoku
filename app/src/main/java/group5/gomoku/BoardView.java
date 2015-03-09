@@ -13,6 +13,7 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
 
@@ -29,14 +30,14 @@ public class BoardView extends View{
     private static MediaPlayer winSound;
 
     //Determine whether we are in multiplayer or not
-    private boolean online;
+    public boolean online;
     private boolean isTurn;
     //Score text views
     private TextView score1;
     private TextView score2;
     //Score variables;
-    private int scoreValue1;
-    private int scoreValue2;
+    public int scoreValue1;
+    public int scoreValue2;
     //strings for passing scores
     private String strScoreValue1;
     private String strScoreValue2;
@@ -47,20 +48,23 @@ public class BoardView extends View{
     //isBlack will track whose turn it is
     private boolean isBlack = true;
     //gridDimension will hold information about the size of the board
-    private int gridDimension;
+    public int gridDimension;
     //count variable for checking the state when no player can win the game
     private int num_empty_spaces;
     //circleSize holds information about the size of the pieces.
     private float circleSize;
     //Store 0 for empty square, 1 for black, 2 for white
     public int[][] boardState;
-    private boolean AI = false;
+    public boolean AI = false;
 
     //Create some paints we will draw with, one for each player piece, and one for the grid lines
     private Paint gridPaint;
     private Paint blackPiece;
     private Paint whitePiece;
     private Chronometer chronometer;
+
+    Button scores =(Button) findViewById(R.id.button_home);
+
 
 
     public BoardView(Context context, AttributeSet attrs, int defStyle) {
