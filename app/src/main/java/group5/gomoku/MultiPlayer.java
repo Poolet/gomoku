@@ -533,11 +533,6 @@ public class MultiPlayer extends Board implements View.OnClickListener {
             }
         }
 
-        public void sendGameSize(int n)
-        {
-            mHandler.obtainMessage(INIT_CLIENT_BOARD, -1, n).sendToTarget();
-        }
-
         /* Call this from the main activity to send data to the remote device */
         public void write(byte[] bytes) {
             try {
