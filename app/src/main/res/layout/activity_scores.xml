@@ -40,7 +40,7 @@
         android:layout_alignRight="@+id/button_home"
         android:layout_alignEnd="@+id/button_home" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
@@ -50,9 +50,10 @@
         android:layout_alignStart="@+id/textView4"
         android:layout_alignRight="@+id/textView4"
         android:layout_alignEnd="@+id/textView4"
-        android:background="@color/ripple_material_light" />
+        android:background="@color/ripple_material_light"
+        android:textAlignment="center" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/editText2"
@@ -61,17 +62,18 @@
         android:layout_alignStart="@+id/textView5"
         android:background="@color/ripple_material_light"
         android:layout_alignRight="@+id/button_home"
-        android:layout_alignEnd="@+id/button_home" />
+        android:layout_alignEnd="@+id/button_home"
+        android:textAlignment="center" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Play Again"
         android:id="@+id/button_playAgain"
+        android:layout_marginTop="139dp"
         android:layout_below="@+id/editText"
-        android:layout_toLeftOf="@+id/textView3"
-        android:layout_toStartOf="@+id/textView3"
-        android:layout_marginTop="133dp" />
+        android:layout_alignLeft="@+id/editText"
+        android:layout_alignStart="@+id/editText" />
 
     <Button
         android:layout_width="wrap_content"
