@@ -43,21 +43,36 @@ public class SelectBoard extends ActionBarActivity implements OnClickListener {
             case R.id.size_10_button:
                 i = new Intent(this, Board.class);
                 gameSettings.putInt("boardSize", 10);
-                gameSettings.putBoolean("AI", bundle.getBoolean("AI"));
+                try {
+                  gameSettings.putBoolean("AI", bundle.getBoolean("AI"));
+                } catch(Exception e)
+                {
+
+                }
                 i.putExtras(gameSettings);
                 startActivity(i);
                 break;
             case R.id.size_15_button:
                 i = new Intent(this, Board.class);
                 gameSettings.putInt("boardSize", 15);
-                gameSettings.putBoolean("AI", bundle.getBoolean("AI"));
+                try {
+                    gameSettings.putBoolean("AI", bundle.getBoolean("AI"));
+                }catch(Exception e)
+                {
+
+                }
                 i.putExtras(gameSettings);
                 startActivity(i);
                 break;
             case R.id.size_20_button:
                 i = new Intent(this, Board.class);
                 gameSettings.putInt("boardSize", 20);
-                gameSettings.putBoolean("AI", bundle.getBoolean("AI"));
+                try {
+                    gameSettings.putBoolean("AI", bundle.getBoolean("AI"));
+                } catch(Exception e)
+                {
+
+                }
                 i.putExtras(gameSettings);
                 startActivity(i);
                 break;
